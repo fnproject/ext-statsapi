@@ -69,17 +69,18 @@ On Linux you can do
 
 ### Try some API calls
 
+After starting the example extended Fn server, create some functions. If you don't then you won't get any statistics!
+
+The following API call requests metric values for the past five minutes, with an interval of 30s between values.
+
 ```sh
 curl 'http://localhost:8080/v1/statistics'
 ```
-This requests metric values for the past five minutes, with an interval of 30s between values.
-
+The following API call requests metric values for the time period from `starttime` to `endtime`, with an interval of `step` between values. (You will need to replace the example values of `starttime` to `endtime` shown below with more recent times or you won't get any statistics.)
 
 ```sh
 curl 'http://localhost:8080/v1/statistics?starttime=2017-11-24T18:01:30.851Z&endtime=2017-11-24T18:11:30.849Z&step=30s'
 ```
-This requests metric values for the time period from `starttime` to `endtime`, with an interval of `step` between values. 
-
 `starttime` and `endtime` should be of the form `2017-11-24T18:01:30.851Z`
 
 `step` should be a number followed by a time unit, such as `30s` or `5m`.
