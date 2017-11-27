@@ -1,0 +1,10 @@
+package: github.com/fnproject/ext-metrics
+import:
+- package: github.com/fnproject/fn
+  version: 0.3.197
+  subpackages:
+  - api/models
+  - api/server
+- package: github.com/fnproject/metrics
+  subpackages:
+  - handlers
