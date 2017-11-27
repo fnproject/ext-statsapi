@@ -62,6 +62,8 @@ On Linux you can do
 
 ### Try some API calls
 
+After starting the example extended Fn server, create some functions. If you don't then you won't get any statistics!
+
 ```sh
 curl 'http://localhost:8080/v1/statistics'
 ```
