@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/fnproject/fn/api/server"
 	"github.com/fnproject/ext-metrics/handlers"
+	"github.com/fnproject/fn/api/server"
 )
 
 func main() {

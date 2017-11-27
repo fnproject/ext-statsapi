@@ -15,7 +15,7 @@ See `main.go` in this directory for an example.
 
 ## Build the metrics API extension
 
-To build the metrics API extension and the example extended Fn server:
+Perform the following to build the metrics API extension. This also builds the example extended Fn server.
 
 ```sh
 glide install
@@ -33,6 +33,13 @@ See `main.go` in this directory.
 You can also start it and use it to try out the metrics API.
 
 ### Start the example extended Fn server 
+
+By default, the metrics API will fetch data from a Prometheus server listening at `localhost:9090`. If a different host or port is required, set
+```
+export PROM_HOST=myhost
+export PROM_PORT=1234
+```
+Now start the example extended Fn server 
 
 ```sh
 ./ext-metrics

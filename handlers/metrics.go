@@ -6,17 +6,34 @@ import (
 	"fmt"
 	"github.com/fnproject/fn/api/models"
 	"github.com/fnproject/fn/api/server"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
 )
 
+const (
+	EnvPromHost = "prom_host"
+	EnvPromPort = "prom_port"
+)
+
 type globalStatisticsHandler struct{}
 type appStatisticsHandler struct{}
 
+var promHost string
+var promPort string
+
 // Call this function from the main function of any Fn server to add this extension to the API
 func AddEndpoints(s *server.Server) {
+
+	viper.AutomaticEnv() // picks up env vars automatically
+	viper.SetDefault(EnvPromHost, "localhost")
+	viper.SetDefault(EnvPromPort, "9090")
+	promHost = viper.GetString(EnvPromHost)
+	promPort = viper.GetString(EnvPromPort)
+	println("promHost=", promHost, "promPort=", promPort)
+
 	s.AddEndpoint("GET", "/statistics", &globalStatisticsHandler{})
 
 	// the following will be at /v1/apps/:app_name/statistics
@@ -26,14 +43,14 @@ func AddEndpoints(s *server.Server) {
 func (h *globalStatisticsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintf(w, "globalStatisticsHandler handling %q", html.EscapeString(r.URL.Path))
 	jsonData := getJSONResponse(r, "", "")
-    w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, string(jsonData))
 }
 
 func (h *appStatisticsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request, app *models.App) {
 	//fmt.Fprintf(w, "appStatisticsHandler handling %q", html.EscapeString(r.URL.Path))
 	jsonData := getJSONResponse(r, app.Name, "")
-    w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, string(jsonData))
 }
 
@@ -211,7 +228,7 @@ func getMetricsResponse(appName string, routeName string, starttimeString string
 // Get the data for a particular metric
 func getDataFor(metricName string, appName string, routeName string, starttimeString string, endtimeString string, stepString string) ([]metricsTimeValuePair, error) {
 
-	url := "http://localhost:9090/api/v1/query_range?query=sum(" + metricName + ")&start=" + starttimeString + "&end=" + endtimeString + "&step=" + stepString
+	url := "http://" + promHost + ":" + promPort + "/api/v1/query_range?query=sum(" + metricName + ")&start=" + starttimeString + "&end=" + endtimeString + "&step=" + stepString
 	promClient := http.Client{
 		Timeout: time.Second * 2, // Maximum of 2 secs
 	}
@@ -276,9 +293,9 @@ func getDataFor(metricName string, appName string, routeName string, starttimeSt
 		for i, val := range thisPromQueryRangeData.Data.Result[0].Value {
 			tvp := new(metricsTimeValuePair)
 			tvp.Time = int64(val.UnixTime())
-//			if val.ScalarValue()=="NaN" {
-//				println("foo")
-//			}
+			//			if val.ScalarValue()=="NaN" {
+			//				println("foo")
+			//			}
 			value, err := strconv.ParseFloat(val.ScalarValue(), 64)
 			tvp.Value = value
 			if err != nil {
