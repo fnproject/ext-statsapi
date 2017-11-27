@@ -18,8 +18,13 @@ See `main.go` in this directory for an example.
 To build the metrics API extension and the example extended Fn server:
 
 ```sh
+glide install
+```
+
+```sh
 go build
 ```
+
 
 ## Try out the metrics API using the example extended Fn server
 
