@@ -36,8 +36,8 @@ You can also start it and use it to try out the metrics API.
 
 By default, the metrics API will fetch data from a Prometheus server listening at `localhost:9090`. If a different host or port is required, set
 ```
-export PROM_HOST=myhost
-export PROM_PORT=1234
+export PROM_HOST=<host>
+export PROM_PORT=<port>
 ```
 Now start the example extended Fn server 
 
@@ -150,7 +150,7 @@ If there were no failures the array may be empty.
 
 * The `completed` metric will be replaced a new metric `calls` which will be a count of all completed calls, including failed calls.
 
-* Currently it is assumed that the Prometheus server is on `localhost:9090`. This needs to be configurable.
+* ~Currently it is assumed that the Prometheus server is on `localhost:9090`. This needs to be configurable.~
 
 * Per-application metrics 
 
