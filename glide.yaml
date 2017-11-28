@@ -1,10 +1,9 @@
 package: github.com/fnproject/ext-metrics
 import:
 - package: github.com/fnproject/fn
-  version: 0.3.197
+  version: merge_PR_542_and_PR_547
   subpackages:
   - api/models
   - api/server
-- package: github.com/fnproject/metrics
-  subpackages:
-  - handlers
+- package: github.com/spf13/viper
+  version: v1.0.0

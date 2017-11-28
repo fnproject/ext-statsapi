@@ -20,6 +20,7 @@ const (
 
 type globalStatisticsHandler struct{}
 type appStatisticsHandler struct{}
+type routeStatisticsHandler struct{}
 
 var promHost string
 var promPort string
@@ -38,6 +39,9 @@ func AddEndpoints(s *server.Server) {
 
 	// the following will be at /v1/apps/:app_name/statistics
 	s.AddAppEndpoint("GET", "/statistics", &appStatisticsHandler{})
+
+	// the following will be at /v1/apps/:app_name/routes/:route_name/statistics
+	s.AddRouteEndpoint("GET", "/statistics", &routeStatisticsHandler{})
 }
 
 func (h *globalStatisticsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -50,6 +54,13 @@ func (h *globalStatisticsHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 func (h *appStatisticsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request, app *models.App) {
 	//fmt.Fprintf(w, "appStatisticsHandler handling %q", html.EscapeString(r.URL.Path))
 	jsonData := getJSONResponse(r, app.Name, "")
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, string(jsonData))
+}
+
+func (h *routeStatisticsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request, app *models.App, route *models.Route) {
+	//fmt.Fprintf(w, "appStatisticsHandler handling %q", html.EscapeString(r.URL.Path))
+	jsonData := getJSONResponse(r, app.Name, route.Path)
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, string(jsonData))
 }
@@ -90,11 +101,6 @@ func getJSONResponse(r *http.Request, appname string, routename string) []byte {
 }
 
 // Extract and return the required URL query parameters, generating default values if missing
-
-// starttimeString - start of range - (string of format 2006-01-02T15:04:05.999Z07:00)
-// endtimeString - end of range - (string of format 2006-01-02T15:04:05.999Z07:00)
-// stepTime - milliseconds - time duration between values
-//
 func getParams(r *http.Request) (string, string, string, error) {
 
 	var starttimeString, endtimeString, stepString string
@@ -151,7 +157,6 @@ func getParams(r *http.Request) (string, string, string, error) {
 	}
 
 	if endtime.Before(starttime) {
-		println("endtime (" + endtimeString + ") is before starttime (" + starttimeString + ")")
 		err = errors.New("endtime (" + endtimeString + ") is before starttime (" + starttimeString + ")")
 		return "", "", "", err
 	}
@@ -159,7 +164,6 @@ func getParams(r *http.Request) (string, string, string, error) {
 	if len(stepParams) == 0 {
 		// step not specified, assume 30 secs
 		stepString = time.Duration(30 * time.Second).String()
-		println("getParams: step not specified. step=", stepString)
 	}
 
 	return starttimeString, endtimeString, stepString, err
@@ -203,7 +207,6 @@ func (tvp timeValuePair) ScalarValue() string {
 const prometheusTimeFormat = "2006-01-02T15:04:05.999Z07:00"
 
 func getMetricsResponse(appName string, routeName string, starttimeString string, endtimeString string, stepString string) (*metricsResponse, error) {
-
 	responseStruct := new(metricsResponse)
 	responseStruct.Status = "success"
 
@@ -228,7 +231,16 @@ func getMetricsResponse(appName string, routeName string, starttimeString string
 // Get the data for a particular metric
 func getDataFor(metricName string, appName string, routeName string, starttimeString string, endtimeString string, stepString string) ([]metricsTimeValuePair, error) {
 
+	if appName != "" && routeName =="" {
+		// appName specified
+		metricName = metricName + "{app=\"" + appName + "\"}"
+	} else if appName != "" && routeName !="" {
+		// appName and routeName specified
+		metricName = metricName + "{app=\"" + appName + "\",path=\"" + routeName + "\"}"
+	}	
+	
 	url := "http://" + promHost + ":" + promPort + "/api/v1/query_range?query=sum(" + metricName + ")&start=" + starttimeString + "&end=" + endtimeString + "&step=" + stepString
+
 	promClient := http.Client{
 		Timeout: time.Second * 2, // Maximum of 2 secs
 	}

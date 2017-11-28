@@ -71,16 +71,37 @@ On Linux you can do
 
 After starting the example extended Fn server, create some functions. If you don't then you won't get any statistics!
 
+#### Statistics for all applications
+
 The following API call requests metric values for the past five minutes, with an interval of 30s between values.
 
 ```sh
 curl 'http://localhost:8080/v1/statistics'
 ```
+
+To specify a different time range and interval see [Time and step parameters](#time-and-step-parameters) below 
+
+#### Statistics for a single application
+
+To obtain statistics for a single application `hello-async-a`:
+```sh
+curl 'http://localhost:8080/v1/apps/hello-async-a/statistics'
+```
+#### Statistics for a single route
+
+To obtain statistics for a single route `hello-async-a1` in application `hello-async-a`:
+```sh
+curl 'http://localhost:8080/v1/apps/hello-async-a/routes/hello-async-a1/statistics'
+```
+
+#### Time and step parameters
+
 The following API call requests metric values for the time period from `starttime` to `endtime`, with an interval of `step` between values. (You will need to replace the example values of `starttime` to `endtime` shown below with more recent times or you won't get any statistics.)
 
 ```sh
 curl 'http://localhost:8080/v1/statistics?starttime=2017-11-24T18:01:30.851Z&endtime=2017-11-24T18:11:30.849Z&step=30s'
 ```
+
 `starttime` and `endtime` should be of the form `2017-11-24T18:01:30.851Z`
 
 `step` should be a number followed by a time unit, such as `30s` or `5m`.
@@ -152,9 +173,9 @@ If there were no failures the array may be empty.
 
 * ~Currently it is assumed that the Prometheus server is on `localhost:9090`. This needs to be configurable.~
 
-* Per-application metrics 
+* ~Per-application metrics~
 
-* Per-function (route) metrics
+* ~Per-function (route) metrics~
 
 * Proper tests
 
