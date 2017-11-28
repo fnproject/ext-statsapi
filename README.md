@@ -185,9 +185,6 @@ If there were no failures the array may be empty.
 
 * Duration metrics. This will require a new tracing span that works for both cold and hot functions. 
 
-
-## Contributing
-
 ## Running the tests
 
 To run the tests
