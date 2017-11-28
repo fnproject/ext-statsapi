@@ -57,8 +57,6 @@ The simplest way to do this is to use the configuration file provided in the [Pr
 Clone [Fn](https://github.com/fnproject/fn) if you have not already done so. This is needed to obtain the required Prometheus configuration file.
 
 Now start Prometheus, replacing `<ip-address>` with the IP address on which the extended Fn server is listening:
-
-Alternatively explicitly specify the IP address of the Fn server: (in the example below this is 10.0.2.)
 ```
   docker run --name=prometheus -d -p 9090:9090 \
     -v ${GOPATH}/src/github.com/fnproject/fn/examples/grafana/prometheus.yml:/etc/prometheus/prometheus.yml \
@@ -73,7 +71,7 @@ On Linux you can do
 
 ## Try some API calls
 
-After starting the example extended Fn server, create some functions. If you don't then you won't get any statistics!
+After starting your custom Fn server or the example extended Fn server, you must create some functions. If you don't then you won't get any statistics!
 
 ### Statistics for all applications
 
