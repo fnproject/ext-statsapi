@@ -24,7 +24,7 @@ You also need to start a Prometheus server.
 
 This project provides an example of a Fn server which has been extended to include the metrics API. 
 See `main.go` in this directory.
-You can also start it and use it to try out the metrics API.
+You can use this to try out the metrics API.
 
 ### Build the example extended Fn server
 
