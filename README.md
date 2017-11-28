@@ -1,22 +1,34 @@
 # Metrics
 
-This is a Fn extension to extend the Fn API to provide statistical metrics.
+This is a Fn extension to extend the Fn API to provide statistical metrics. 
+
+There are two alternative ways to use it
+* Add the metrics API to to your own custom Fn server
+* Use the example extended Fn server
+
+In both cases you need to have a Prometheus server running as well.
 
 ## Add the metrics API to to your custom Fn server
 
-To add the metrics API extension to your own custom version of the Fn server, add the following to your `main.go`:.
+If you intend to add the metrics API extension to your own custom version of the Fn server, add the following to your `main.go`:.
 
 ```
 // Add the metrics API extension before you call funcServer.Start(ctx)
 handlers.AddEndpoints(funcServer)
 ```
-
 See `main.go` in this directory for an example.
 
-## Build the metrics API extension
+You also need to start a Prometheus server.
 
-Perform the following to build the metrics API extension. This also builds the example extended Fn server.
+## Use the example extended Fn server
 
+This project provides an example of a Fn server which has been extended to include the metrics API. 
+See `main.go` in this directory.
+You can also start it and use it to try out the metrics API.
+
+### Build the example extended Fn server
+
+If you intend to use the example extended Fn server, you first need to  build it:
 ```sh
 glide install
 ```
@@ -24,14 +36,6 @@ glide install
 ```sh
 go build
 ```
-
-
-## Try out the metrics API using the example extended Fn server
-
-This project provides an example of a Fn server which has been extended to include the metrics API. 
-See `main.go` in this directory.
-You can also start it and use it to try out the metrics API.
-
 ### Start the example extended Fn server 
 
 By default, the metrics API will fetch data from a Prometheus server listening at `localhost:9090`. If a different host or port is required, set
@@ -45,7 +49,7 @@ Now start the example extended Fn server
 ./ext-metrics
 ```
 
-### Start Prometheus
+## Start Prometheus
 
 You need to configure Prometheus to scrape data from the Fn server. 
 The simplest way to do this is to use the configuration file provided in the [Prometheus and Grafana example](https://github.com/fnproject/fn/tree/master/examples/grafana):
@@ -67,11 +71,11 @@ On Linux you can do
     --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
 ```
 
-### Try some API calls
+## Try some API calls
 
 After starting the example extended Fn server, create some functions. If you don't then you won't get any statistics!
 
-#### Statistics for all applications
+### Statistics for all applications
 
 The following API call requests metric values for the past five minutes, with an interval of 30s between values.
 
@@ -81,20 +85,20 @@ curl 'http://localhost:8080/v1/statistics'
 
 To specify a different time range and interval see [Time and step parameters](#time-and-step-parameters) below 
 
-#### Statistics for a single application
+### Statistics for a single application
 
 To obtain statistics for a single application `hello-async-a`:
 ```sh
 curl 'http://localhost:8080/v1/apps/hello-async-a/statistics'
 ```
-#### Statistics for a single route
+### Statistics for a single route
 
 To obtain statistics for a single route `hello-async-a1` in application `hello-async-a`:
 ```sh
 curl 'http://localhost:8080/v1/apps/hello-async-a/routes/hello-async-a1/statistics'
 ```
 
-#### Time and step parameters
+### Time and step parameters
 
 The following API call requests metric values for the time period from `starttime` to `endtime`, with an interval of `step` between values. (You will need to replace the example values of `starttime` to `endtime` shown below with more recent times or you won't get any statistics.)
 
@@ -106,7 +110,7 @@ curl 'http://localhost:8080/v1/statistics?starttime=2017-11-24T18:01:30.851Z&end
 
 `step` should be a number followed by a time unit, such as `30s` or `5m`.
 
-# Response format
+## Response format
 
 Here is a sample response:
 
