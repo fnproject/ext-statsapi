@@ -54,7 +54,10 @@ Now start the example extended Fn server
 You need to configure Prometheus to scrape data from the Fn server. 
 The simplest way to do this is to use the configuration file provided in the [Prometheus and Grafana example](https://github.com/fnproject/fn/tree/master/examples/grafana):
 
-Clone [Fn](https://github.com/fnproject/fn) if you have not already done so. This is needed to obtain the required Prometheus configuration file.
+Clone [github.com/fnproject/fn](https://github.com/fnproject/fn) if you have not already done so. This is needed to obtain the required Prometheus configuration file.
+```
+go get -d github.com/fnproject/fn
+```
 
 Now start Prometheus, replacing `<ip-address>` with the IP address on which the extended Fn server is listening:
 ```
