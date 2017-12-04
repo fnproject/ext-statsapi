@@ -166,8 +166,7 @@ The `data` element contains elements `completed`, `failed` and `durations`.
 * The `failed` element is an array of objects. Each object contains a single observation of the `fn_api_failed` counter metric at a specific time.
 This is a count of failed (or timed out) function calls since the server was started.
 If there were no failures the array may be empty.  
-* The `durations` element is an array of objects. Each object contains a single calculated value of the rolling mean `fn_span_agent_submit` histogram metric, 
-where the rolling mean is calculated over a period of one minute. 
+* The `durations` element is an array of objects. Each object contains a single calculated value of the rolling mean `fn_span_agent_submit_duration_seconds` histogram metric, where the rolling mean is calculated over a period of one minute. 
 
 ## Design notes
 
