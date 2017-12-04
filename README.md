@@ -40,8 +40,8 @@ go build
 
 By default, the metrics API will fetch data from a Prometheus server listening at `localhost:9090`. If a different host or port is required, set
 ```
-export PROM_HOST=<host>
-export PROM_PORT=<port>
+export FN_EXT_METRICS_PROM_HOST=<host>
+export FN_EXT_METRICS_PROM_PORT=<port>
 ```
 Now start the example extended Fn server 
 
@@ -52,23 +52,22 @@ Now start the example extended Fn server
 ## Start Prometheus
 
 You need to configure Prometheus to scrape data from the Fn server. 
-The simplest way to do this is to use the configuration file provided in the [Prometheus and Grafana example](https://github.com/fnproject/fn/tree/master/examples/grafana):
 
-Clone [github.com/fnproject/fn](https://github.com/fnproject/fn) if you have not already done so. This is needed to obtain the required Prometheus configuration file.
-```
-go get -d github.com/fnproject/fn
-```
+A suitable Prometheus configuration file `prometheus.yml` is provided in this project. This contains the following configuration settings:
 
-Now start Prometheus, replacing `<ip-address>` with the IP address on which the extended Fn server is listening:
+* Metrics are scraped from a Fn server listening on `fnserver:8080`. `fnserver` is an alias. When Prometheus is started in docker the `--add-host` parameter is used to specify the actual hostname or IP address to which it corresponds.
+* Some Prometheus metrics are relabelled to support the queries that are required.
+
+Start Prometheus, replacing `<ip-address>` with the IP address on which the extended Fn server is listening:
 ```
   docker run --name=prometheus -d -p 9090:9090 \
     -v ${GOPATH}/src/github.com/fnproject/fn/examples/grafana/prometheus.yml:/etc/prometheus/prometheus.yml \
     --add-host="fnserver:<ip-address>" prom/prometheus
 ```    
-On Linux you can do
+On Linux you can do:
 ```
   docker run --name=prometheus -d -p 9090:9090 \
-    -v ${GOPATH}/src/github.com/fnproject/fn/examples/grafana/prometheus.yml:/etc/prometheus/prometheus.yml \
+    -v ${GOPATH}/src/github.com/fnproject/ext-metrics/prometheus.yml:/etc/prometheus/prometheus.yml \
     --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
 ```
 

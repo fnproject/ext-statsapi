@@ -1,9 +1,8 @@
 package: github.com/fnproject/ext-metrics
 import:
 - package: github.com/fnproject/fn
-  version: master
+  version: more_metrics
   subpackages:
   - api/models
   - api/server
-- package: github.com/spf13/viper
-  version: v1.0.0
+  - api/fncommon
