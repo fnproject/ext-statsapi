@@ -116,43 +116,45 @@ Here is a sample response:
 
 ```json
 {
-  "status": "success",
-  "data": {
-    "completed": [
+  "status":"success",
+  "data":{
+    "completed":[
       {
-        "Time": 1511546850,
-        "Value": 18
+        "Time":1512416119,
+        "Value":9
       },
       {
-        "Time": 1511546880,
-        "Value": 32
+        "Time":1512416149,
+        "Value":33
       },
       {
-        "Time": 1511546910,
-        "Value": 48
+        "Time":1512416179,
+        "Value":59
       },
       {
-        "Time": 1511546940,
-        "Value": 67
-      },
-      {
-        "Time": 1511546970,
-        "Value": 89
-      },
-      {
-        "Time": 1511547000,
-        "Value": 104
-      },
-      {
-        "Time": 1511547030,
-        "Value": 121
-      },
-      {
-        "Time": 1511547060,
-        "Value": 139
+        "Time":1512416209,
+        "Value":85
       }
     ],
-    "failed": []
+    "durations":[
+       {
+         "Time":1512416119,
+         "Value":13.310655658088855
+       },
+       {
+         "Time":1512416149,
+         "Value":14.841753632280154
+       },
+       {
+         "Time":1512416179,
+         "Value":34.04480194936709
+       },
+       {
+         "Time":1512416209,
+         "Value":45.51680103676471
+       }
+     ],
+    "failed":[]
   }
 }
 ```
