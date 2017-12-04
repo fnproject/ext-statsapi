@@ -10,13 +10,13 @@ In both cases you need to have a Prometheus server running as well.
 
 ## Add the metrics API to to your custom Fn server
 
-If you intend to add the metrics API extension to your own custom version of the Fn server, add the following to your `main.go`:.
+If you intend to add the metrics API extension to your own custom version of the Fn server, add the following to your `main.go`:
 
 ```
 // Add the metrics API extension before you call funcServer.Start(ctx)
 handlers.AddEndpoints(funcServer)
 ```
-See `main.go` in this directory for an example.
+You will need to add an import statement for `github.com/fnproject/ext-metrics/statistics`. See `main.go` in this directory for an example.
 
 You also need to start a Prometheus server.
 
@@ -40,8 +40,8 @@ go build
 
 By default, the metrics API will fetch data from a Prometheus server listening at `localhost:9090`. If a different host or port is required, set
 ```
-export PROM_HOST=<host>
-export PROM_PORT=<port>
+export FN_EXT_METRICS_PROM_HOST=<host>
+export FN_EXT_METRICS_PROM_PORT=<port>
 ```
 Now start the example extended Fn server 
 
@@ -52,23 +52,22 @@ Now start the example extended Fn server
 ## Start Prometheus
 
 You need to configure Prometheus to scrape data from the Fn server. 
-The simplest way to do this is to use the configuration file provided in the [Prometheus and Grafana example](https://github.com/fnproject/fn/tree/master/examples/grafana):
 
-Clone [github.com/fnproject/fn](https://github.com/fnproject/fn) if you have not already done so. This is needed to obtain the required Prometheus configuration file.
-```
-go get -d github.com/fnproject/fn
-```
+A suitable Prometheus configuration file `prometheus.yml` is provided in this project. This contains the following configuration settings:
 
-Now start Prometheus, replacing `<ip-address>` with the IP address on which the extended Fn server is listening:
+* Metrics are scraped from a Fn server listening on `fnserver:8080`. `fnserver` is an alias. When Prometheus is started in docker the `--add-host` parameter is used to specify the actual hostname or IP address to which it corresponds.
+* Some Prometheus metrics are relabelled to support the queries that are required.
+
+Start Prometheus, replacing `<ip-address>` with the IP address on which the extended Fn server is listening:
 ```
   docker run --name=prometheus -d -p 9090:9090 \
     -v ${GOPATH}/src/github.com/fnproject/fn/examples/grafana/prometheus.yml:/etc/prometheus/prometheus.yml \
     --add-host="fnserver:<ip-address>" prom/prometheus
 ```    
-On Linux you can do
+On Linux you can do:
 ```
   docker run --name=prometheus -d -p 9090:9090 \
-    -v ${GOPATH}/src/github.com/fnproject/fn/examples/grafana/prometheus.yml:/etc/prometheus/prometheus.yml \
+    -v ${GOPATH}/src/github.com/fnproject/ext-metrics/prometheus.yml:/etc/prometheus/prometheus.yml \
     --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
 ```
 
@@ -117,43 +116,45 @@ Here is a sample response:
 
 ```json
 {
-  "status": "success",
-  "data": {
-    "completed": [
+  "status":"success",
+  "data":{
+    "completed":[
       {
-        "Time": 1511546850,
-        "Value": 18
+        "Time":1512416119,
+        "Value":9
       },
       {
-        "Time": 1511546880,
-        "Value": 32
+        "Time":1512416149,
+        "Value":33
       },
       {
-        "Time": 1511546910,
-        "Value": 48
+        "Time":1512416179,
+        "Value":59
       },
       {
-        "Time": 1511546940,
-        "Value": 67
-      },
-      {
-        "Time": 1511546970,
-        "Value": 89
-      },
-      {
-        "Time": 1511547000,
-        "Value": 104
-      },
-      {
-        "Time": 1511547030,
-        "Value": 121
-      },
-      {
-        "Time": 1511547060,
-        "Value": 139
+        "Time":1512416209,
+        "Value":85
       }
     ],
-    "failed": []
+    "durations":[
+       {
+         "Time":1512416119,
+         "Value":13.310655658088855
+       },
+       {
+         "Time":1512416149,
+         "Value":14.841753632280154
+       },
+       {
+         "Time":1512416179,
+         "Value":34.04480194936709
+       },
+       {
+         "Time":1512416209,
+         "Value":45.51680103676471
+       }
+     ],
+    "failed":[]
   }
 }
 ```
@@ -161,12 +162,13 @@ Here is a sample response:
 The `success` element will be set to success` if the API call is successful. 
 If the API call is unsuccessful then `success` element will be set to `error` and an additional element `error` will contains a description of the failure.
 
-The `data` element contains elements `completed` and `failed`. 
+The `data` element contains elements `completed`, `failed` and `durations`. 
 
-* The `completed` element contains an array of objects. Each object contains a single observation of the `fn_api_completed` counter metric at a specific time. This is a count of the number of successful function calls since the server was started.
+* The `completed` element is an array of objects. Each object contains a single observation of the `fn_api_completed` counter metric at a specific time. This is a count of the number of successful function calls since the server was started.
 * The `failed` element is an array of objects. Each object contains a single observation of the `fn_api_failed` counter metric at a specific time.
 This is a count of failed (or timed out) function calls since the server was started.
 If there were no failures the array may be empty.  
+* The `durations` element is an array of objects. Each object contains a single calculated value of the rolling mean `fn_span_agent_submit_duration_seconds` histogram metric, where the rolling mean is calculated over a period of one minute. 
 
 ## Design notes
 
@@ -186,7 +188,7 @@ If there were no failures the array may be empty.
 
 * Replace `completed` and `failed` with new metrics that conform to the requirements
 
-* Duration metrics. This will require a new tracing span that works for both cold and hot functions. 
+* ~Duration metrics~
 
 ## Running the tests
 
