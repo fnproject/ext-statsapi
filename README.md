@@ -160,12 +160,14 @@ Here is a sample response:
 The `success` element will be set to success` if the API call is successful. 
 If the API call is unsuccessful then `success` element will be set to `error` and an additional element `error` will contains a description of the failure.
 
-The `data` element contains elements `completed` and `failed`. 
+The `data` element contains elements `completed`, `failed` and `durations`. 
 
-* The `completed` element contains an array of objects. Each object contains a single observation of the `fn_api_completed` counter metric at a specific time. This is a count of the number of successful function calls since the server was started.
+* The `completed` element is an array of objects. Each object contains a single observation of the `fn_api_completed` counter metric at a specific time. This is a count of the number of successful function calls since the server was started.
 * The `failed` element is an array of objects. Each object contains a single observation of the `fn_api_failed` counter metric at a specific time.
 This is a count of failed (or timed out) function calls since the server was started.
 If there were no failures the array may be empty.  
+* The `durations` element is an array of objects. Each object contains a single calculated value of the rolling mean `fn_span_agent_submit` histogram metric, 
+where the rolling mean is calculated over a period of one minute. 
 
 ## Design notes
 
@@ -185,7 +187,7 @@ If there were no failures the array may be empty.
 
 * Replace `completed` and `failed` with new metrics that conform to the requirements
 
-* Duration metrics. This will require a new tracing span that works for both cold and hot functions. 
+* ~Duration metrics~
 
 ## Running the tests
 
