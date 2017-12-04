@@ -10,13 +10,13 @@ In both cases you need to have a Prometheus server running as well.
 
 ## Add the metrics API to to your custom Fn server
 
-If you intend to add the metrics API extension to your own custom version of the Fn server, add the following to your `main.go`:.
+If you intend to add the metrics API extension to your own custom version of the Fn server, add the following to your `main.go`:
 
 ```
 // Add the metrics API extension before you call funcServer.Start(ctx)
 handlers.AddEndpoints(funcServer)
 ```
-See `main.go` in this directory for an example.
+You will need to add an import statement for `github.com/fnproject/ext-metrics/statistics`. See `main.go` in this directory for an example.
 
 You also need to start a Prometheus server.
 
