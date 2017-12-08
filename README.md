@@ -7,13 +7,8 @@ to use it you need a custom version which is configured with this extension.
 
 There are two examples which describe how to build a custom version of the Fn server: 
 
-<<<<<<< HEAD
 * [How to build a custom Fn server docker image containing the statistics API extension](./examples/operators/README.md)
 * [How to build a custom Fn server executable containing the statistics API extension](./examples/developers/README.md)
-=======
-[How to build a custom Fn server docker image containing the statistics API extension]
-[How to build a custom Fn server executable containing the statistics API extension]
->>>>>>> 1798c68be04c581313e6c44433b09aad558682df
 
 This extension requires Prometheus to be running. 
 The examples above describe how to start Prometheus 
