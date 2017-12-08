@@ -42,7 +42,10 @@ You can then use standard docker tools to deploy it in a docker image repository
 The following command is used to run your custom image. Replace `<ip-address>` with the IP address on which the Fn server is listening:
 
 ```sh
-docker run --rm --name fnserver -it -v /var/run/docker.sock:/var/run/docker.sock -v $PWD/data:/app/data -p 8080:8080 -e FN_EXT_METRICS_PROM_HOST=<ip-address> imageuser/imagename
+docker run --rm --name fnserver -it \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v $PWD/data:/app/data -p 8080:8080 \
+  -e FN_EXT_METRICS_PROM_HOST=<ip-address> imageuser/imagename
 ```
 
 `FN_EXT_METRICS_PROM_HOST` is an environment variable which specifies the host on which the Prometheus server is running. 
@@ -51,9 +54,11 @@ You can also use `FN_EXT_METRICS_PROM_PORT` to specify the port.
 
 On Linux you can use
 ```sh
-docker run --rm --name fnserver -it -v /var/run/docker.sock:/var/run/docker.sock -v $PWD/data:/app/data -p 8080:8080 -e FN_EXT_METRICS_PROM_HOST=`route | grep default | awk '{print $2}'` imageuser/imagename
+docker run --rm --name fnserver -it \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v $PWD/data:/app/data -p 8080:8080 \
+  -e FN_EXT_METRICS_PROM_HOST=`route | grep default | awk '{print $2}'` imageuser/imagename
 ```
-
 
 ## Start Prometheus
 
@@ -62,7 +67,7 @@ Before you can use the statistics API you need to start Prometheus.
 Now start Prometheus, specifying this config file `prometheus.yml` in this directory:
 ```
   docker run --name=prometheus -d -p 9090:9090 \
-    -v ${GOPATH}/src/github.com/fnproject/fn/ext-metrics/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml \
+    -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml \
     --link fnserver prom/prometheus
 ```
 `prometheus.yml` configures Prometheus to scrape metrics from a Fn server running on `fnserver:8080`, where `fnserver` is an alias that is set in the command  above to refer to a container named `fnserver` in which the Fn server is expected to be running.
