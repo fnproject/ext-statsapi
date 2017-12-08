@@ -6,12 +6,9 @@ import (
 )
 
 func GetEnv(key, fallback string) string {
-	println("Looking up env var ", key)
 	if value, ok := os.LookupEnv(key); ok {
-		println("Found value ", value, " for env var ", key)
 		return value
 	}
-	println("No value found for env var ", key, ", falling back to ", fallback)
 	return fallback
 }
 
