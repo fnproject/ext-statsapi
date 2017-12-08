@@ -3,12 +3,12 @@
 This is a Fn extension to extend the Fn API to provide statistical metrics.
 
 Since this is an extension it is not included in the core Fn server: 
-to use it you need a custom version which is configured with this extension.
+to use it you need to build a custom version which is configured with this extension.
 
 There are two examples which describe how to build a custom version of the Fn server: 
 
-* [How to build a custom Fn server docker image containing the statistics API extension](./examples/operators/README.md)
-* [How to build a custom Fn server executable containing the statistics API extension](./examples/developers/README.md)
+* [How to build a custom Fn server docker image](./examples/operators/README.md)
+* [How to build a custom Fn server executable](./examples/developers/README.md)
 
 This extension requires Prometheus to be running. 
 The examples above describe how to start Prometheus 
@@ -16,7 +16,7 @@ and how to configure the custom Fn server and Prometheus to connect to one anoth
 
 ## Try some API calls
 
-If yo have a custom Fn server running, and have started Prometheus, you can then try out the statistics API extension.
+If you have a custom Fn server running, and have started Prometheus, you can then try out the statistics API extension.
 
 ### Statistics for all applications
 
