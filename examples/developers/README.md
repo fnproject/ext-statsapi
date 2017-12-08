@@ -7,7 +7,6 @@ This will be of particular interest to developers working on the statistics API 
 ## Create `main.go`
 
 Add the following line to your `main.go` before the call to `funcServer.Start(ctx)`:
-
 ```
 funcServer.AddExtensionByName(statistics.StatisticsExtensionName())
 ```
@@ -38,7 +37,6 @@ go build
 ```
 
 ## Run your custom Fn server
-
 
 ```sh
 ./ext-metrics
