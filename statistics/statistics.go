@@ -21,13 +21,11 @@ type globalStatisticsHandler struct{}
 type appStatisticsHandler struct{}
 type routeStatisticsHandler struct{}
 
-func init() {
+func AddEndpoints(s fnext.ExtServer) {
+	
 	promHost = fncommon.GetEnv(EnvPromHost, "localhost")
 	promPort = fncommon.GetEnv(EnvPromPort, "9090")
-}
-
-func AddEndpoints(s fnext.ExtServer) {
-
+	
 	s.AddEndpoint("GET", "/statistics", &globalStatisticsHandler{})
 
 	// the following will be at /v1/apps/:app_name/statistics

@@ -1,85 +1,22 @@
 # Metrics
 
-This is a Fn extension to extend the Fn API to provide statistical metrics. 
+This is a Fn extension to extend the Fn API to provide statistical metrics.
 
-There are two alternative ways to use it
-* Add the metrics API to to your own custom Fn server
-* Use the example extended Fn server
+Since this is an extension it is not included in the core Fn server: 
+to use it you need a custom version which is configured with this extension.
 
-In both cases you need to have a Prometheus server running as well.
+There are two examples which describe how to build a custom version of the Fn server: 
 
-## Add the metrics API to to your custom Fn server
+[How to build a custom Fn server docker image containing the statistics API extension]
+[How to build a custom Fn server executable containing the statistics API extension]
 
-If you intend to add the metrics API extension to your own custom version of the Fn server, add the following to your `main.go`:
-
-```
-funcServer.AddExtensionByName(statistics.StatisticsExtensionName())
-```
-You will need to the following import statement:
-```
-"github.com/fnproject/ext-metrics/statistics"
-```
-
-See `main.go` in this directory for an example.
-
-Then you can build and run your custom version of the Fn server as normal.
-
-You also need to start a Prometheus server.
-
-## Use the example extended Fn server
-
-This project provides an example of a Fn server which has been extended to include the metrics API. 
-See `main.go` in this directory.
-You can use this to try out the metrics API.
-
-### Build the example extended Fn server
-
-If you intend to use the example extended Fn server, you first need to  build it:
-```sh
-glide install
-```
-
-```sh
-go build
-```
-### Start the example extended Fn server 
-
-By default, the metrics API will fetch data from a Prometheus server listening at `localhost:9090`. If a different host or port is required, set
-```
-export FN_EXT_METRICS_PROM_HOST=<host>
-export FN_EXT_METRICS_PROM_PORT=<port>
-```
-Now start the example extended Fn server 
-
-```sh
-./ext-metrics
-```
-
-## Start Prometheus
-
-You need to configure Prometheus to scrape data from the Fn server. 
-
-A suitable Prometheus configuration file `prometheus.yml` is provided in this project. This contains the following configuration settings:
-
-* Metrics are scraped from a Fn server listening on `fnserver:8080`. `fnserver` is an alias. When Prometheus is started in docker the `--add-host` parameter is used to specify the actual hostname or IP address to which it corresponds.
-* Some Prometheus metrics are relabelled to support the queries that are required.
-
-Start Prometheus, replacing `<ip-address>` with the IP address on which the extended Fn server is listening:
-```
-  docker run --name=prometheus -d -p 9090:9090 \
-    -v ${GOPATH}/src/github.com/fnproject/fn/examples/grafana/prometheus.yml:/etc/prometheus/prometheus.yml \
-    --add-host="fnserver:<ip-address>" prom/prometheus
-```    
-On Linux you can do:
-```
-  docker run --name=prometheus -d -p 9090:9090 \
-    -v ${GOPATH}/src/github.com/fnproject/ext-metrics/prometheus.yml:/etc/prometheus/prometheus.yml \
-    --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
-```
+This extension requires Prometheus to be running. 
+The examples above describe how to start Prometheus 
+and how to configure the custom Fn server and Prometheus to connect to one another.
 
 ## Try some API calls
 
-After starting your custom Fn server or the example extended Fn server, you must create some functions. If you don't then you won't get any statistics!
+If yo have a custom Fn server running, and have started Prometheus, you can then try out the statistics API extension.
 
 ### Statistics for all applications
 
