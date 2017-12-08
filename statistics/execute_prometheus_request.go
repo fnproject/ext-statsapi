@@ -3,7 +3,6 @@ package statistics
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
