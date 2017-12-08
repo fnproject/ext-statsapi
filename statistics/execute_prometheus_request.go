@@ -50,8 +50,6 @@ func executePrometheusRequest(url string) ([]metricsTimeValuePair, error) {
 		return nil, jsonErr
 	}
 
-	fmt.Println(thisPromQueryRangeData)
-
 	if thisPromQueryRangeData.Status != "success" {
 		return nil, errors.New("Error from Prometheus: " + thisPromQueryRangeData.ErrorType + ": " + thisPromQueryRangeData.Error)
 	}
