@@ -1,4 +1,4 @@
-# Metrics
+# Fn server extension to provide a statistics API 
 
 This is a Fn extension to extend the Fn API to provide statistical metrics.
 
@@ -7,8 +7,8 @@ to use it you need a custom version which is configured with this extension.
 
 There are two examples which describe how to build a custom version of the Fn server: 
 
-[How to build a custom Fn server docker image containing the statistics API extension]
-[How to build a custom Fn server executable containing the statistics API extension]
+* [How to build a custom Fn server docker image containing the statistics API extension](./examples/operators/README.md)
+* [How to build a custom Fn server executable containing the statistics API extension](./examples/developers/README.md)
 
 This extension requires Prometheus to be running. 
 The examples above describe how to start Prometheus 
