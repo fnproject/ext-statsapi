@@ -10,9 +10,7 @@ import (
 func main() {
 	ctx := context.Background()
 	funcServer := server.NewFromEnv(ctx)
-
-	// Add the metrics API extension
-	statistics.AddEndpoints(funcServer)
+	funcServer.AddExtensionByName(statistics.StatisticsExtensionName())
 
 	fmt.Println("Starting fn server with metrics API extensions")
 	funcServer.Start(ctx)

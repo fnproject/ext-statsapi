@@ -3,7 +3,6 @@ package statistics
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -49,8 +48,6 @@ func executePrometheusRequest(url string) ([]metricsTimeValuePair, error) {
 	if jsonErr != nil {
 		return nil, jsonErr
 	}
-
-	fmt.Println(thisPromQueryRangeData)
 
 	if thisPromQueryRangeData.Status != "success" {
 		return nil, errors.New("Error from Prometheus: " + thisPromQueryRangeData.ErrorType + ": " + thisPromQueryRangeData.Error)

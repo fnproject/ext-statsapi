@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/fnproject/ext-metrics/fncommon"
 	"github.com/fnproject/fn/api/models"
-	"github.com/fnproject/fn/api/server"
+	"github.com/fnproject/fn/fnext"
 	"net/http"
 )
 
@@ -26,8 +26,7 @@ func init() {
 	promPort = fncommon.GetEnv(EnvPromPort, "9090")
 }
 
-// Call this function from the main function of any Fn server to add this extension to the API
-func AddEndpoints(s *server.Server) {
+func AddEndpoints(s fnext.ExtServer) {
 
 	s.AddEndpoint("GET", "/statistics", &globalStatisticsHandler{})
 
