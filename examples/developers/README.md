@@ -10,7 +10,7 @@ Add the following line to your `main.go` before the call to `funcServer.Start(ct
 ```
 funcServer.AddExtensionByName(statistics.StatisticsExtensionName())
 ```
-You will need to the following import statement:
+You will need to add the following import statement:
 ```
 "github.com/fnproject/ext-metrics/statistics"
 ```
