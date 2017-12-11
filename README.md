@@ -1,22 +1,26 @@
 # Fn server extension to provide a statistics API 
 
-This is a Fn extension to extend the Fn API to provide statistical metrics.
+This is a Fn extension that extends the Fn API to provide some basic statistics about the operation of the Fn server. 
+
+The API uses Prometheus internally which allows statistics to be combined from multiple Fn servers,
+not just the one which is handling the request.
 
 Since this is an extension it is not included in the core Fn server: 
-to use it you need to build a custom version which is configured with this extension.
+to use it you need to build a custom Fn server, configured to include this extension.
+This API also requires a Prometheus server to be running.
 
 There are two examples which describe how to build a custom version of the Fn server: 
 
-* [How to build a custom Fn server docker image](./examples/operators/README.md)
-* [How to build a custom Fn server executable](./examples/developers/README.md)
+* [How to build a custom Fn server docker image](./examples/operators/README.md) (mainly of interest to end users and operators)
+* [How to build a custom Fn server executable](./examples/developers/README.md) (mainly of interest to developers working on the statistics API extension itself)
 
-This extension requires Prometheus to be running. 
-The examples above describe how to start Prometheus 
+These examples also describe how to start Prometheus 
 and how to configure the custom Fn server and Prometheus to connect to one another.
 
 ## Try some API calls
 
-If you have a custom Fn server running, and have started Prometheus, you can then try out the statistics API extension.
+If you have Prometheus and a custom Fn server running as described in these examples, 
+you can then deploy and run some functions and obtain information about them using the statistics API extension.
 
 ### Statistics for all applications
 

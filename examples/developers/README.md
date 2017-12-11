@@ -6,7 +6,9 @@ This will be of particular interest to developers working on the statistics API 
 
 ## Create `main.go`
 
-Add the following line to your `main.go` before the call to `funcServer.Start(ctx)`:
+You need to set up a go project with a copy of the [core Fn server `main.go`](https://github.com/fnproject/fn/blob/master/main.go).
+
+Then add the following line to your `main.go` before the call to `funcServer.Start(ctx)`:
 ```
 funcServer.AddExtensionByName(statistics.StatisticsExtensionName())
 ```
@@ -14,10 +16,13 @@ You will need to add the following import statement:
 ```
 "github.com/fnproject/ext-metrics/statistics"
 ```
+There is an [example `main.go`](../../main.go) in the root directory of this project.
 
-See [main.go](../../main.go) in this project's root directory for an example.
+You then need to install dependencies and build your executable.
 
 ## Build your custom Fn server
+
+These steps describe how to build a custom Fn server using the example [main.go](../../main.go).
 
 You need to work in the root directory of this project
 ```
@@ -65,3 +70,5 @@ docker run --name=prometheus -d -p 9090:9090 \
   -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml \
   --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
 ```
+
+You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-metrics/blob/master/README.md).
