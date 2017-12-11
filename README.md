@@ -2,12 +2,12 @@
 
 This is a Fn extension that extends the Fn API to provide some basic statistics about the operation of the Fn server. 
 
-Although the API is provided by Fn, it uses Prometheus internally which allows statistics to be combined from multiple Fn servers,
+The API uses Prometheus internally which allows statistics to be combined from multiple Fn servers,
 not just the one which is handling the request.
 
 Since this is an extension it is not included in the core Fn server: 
-to use it you need to build a custom Fn server which is configured with this extension.
-It also requires a Prometheus server to be running.
+to use it you need to build a custom Fn server, configured to include this extension.
+This API also requires a Prometheus server to be running.
 
 There are two examples which describe how to build a custom version of the Fn server: 
 

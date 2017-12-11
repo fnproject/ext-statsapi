@@ -6,18 +6,16 @@ This will be of particular interest to end users and operators.
 
 ## Configure `ext.yaml`
 
-You need just one file, `ext.yaml`, in which you must list the extensions to include in your custom Fn server image. 
-This directory contains an example configured to include a single extension, the statistics API
-
-If you require additional extensions, add a `name` element for each one.
-The following would include the statistics API extension and a fictitious extension whose package name is `github.com/fnproject/ext-foo/foo`.
-
+You need just one file, `ext.yaml`, in which you must list the extensions to be included in your custom Fn server image. 
+This directory contains an example [ext.yaml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/ext.yaml) configured to include a single extension, the statistics API
 
 ```yaml
 extensions:
 - name: github.com/fnproject/ext-metrics/statistics
-- name: github.com/fnproject/ext-foo/foo
 ```
+
+If you require additional extensions, add a `name` element for each one.
+
 
 ## Build your custom image
 
@@ -40,7 +38,8 @@ This takes care of configuring the two processes to connect to each other.
 
 Install Docker Compose using [these instructions](https://docs.docker.com/compose/install/). 
 
-We will use the Docker Compose configuration file in this directory:
+We will use the [docker-compose.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/docker-compose.yml) in this directory.
+You should change `imageuser/imagename` to whatever you specified when building your custom Fn image.
 
 ```yaml
 version: '3'
@@ -63,13 +62,12 @@ services:
       - ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml
 ```
 
-You should change `imageuser/imagename` to whatever you specified when building your custom Fn image.
+Now start your custom Fn image and Prometheus
 
-You need to work in this directory
 ```
 cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
 ```
-Now start your custom Fn image and Prometheus
+
 ```sh
 docker-compose up
 ```
@@ -81,7 +79,6 @@ You can now deploy and run functions and try out the statistics API extension as
 Alternatively you can start your custom Fn image and Prometheus separately. 
 
 ### Run your custom image
-
 
 The following command is used to run your custom image. Replace `<ip-address>` with the IP address on which the Fn server is listening:
 
