@@ -1,9 +1,5 @@
-# If you want to build your own custom Fn server docker image which loads this extension, 
-# copy this file to your local directory (or add the lines below to an existing ext.yaml)
-# and then build the docker image using
-#   fn build-server -t imageuser/imagename
-# You can then run the image using
-# docker run --rm --name fnserver -it -v /var/run/docker.sock:/var/run/docker.sock -v $PWD/data:/app/data -p 8080:8080 imageuser/imagename
+# This is an example ext.yaml file configured to add the statistics API extension
+# See https://github.com/fnproject/ext-metrics/blob/master/examples/operators/README.md
 
 extensions:
 - name: github.com/fnproject/ext-metrics/statistics

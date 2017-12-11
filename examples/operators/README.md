@@ -21,22 +21,66 @@ extensions:
 
 ## Build your custom image
 
-You need to work in this directory
-```
+We will use the example [ext.yaml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/ext.yaml) in this directory:
+```sh
 cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
 ```
 
 To build your custom image:
-
-
 ```sh
 fn build-server -t imageuser/imagename
 ```
 
 You can then use standard docker tools to deploy it in a docker image repository if required.
 
+## Run your custom Fn image and Prometheus using Docker Compose
 
-## Run your custom image
+The quickest way to start your custom Fn server and Prometheus is to use Docker Compose. 
+This takes care of configuring the two processes to connect to each other.
+
+Install Docker Compose using [these instructions](https://docs.docker.com/compose/install/). 
+
+We will use the Docker Compose configuration file in this directory:
+
+```yaml
+version: '3'
+services:
+  fnserver:
+    image: imageuser/imagename
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $PWD/data:/app/data
+    environment:
+    - FN_EXT_METRICS_PROM_HOST=prometheus
+  prometheus:
+    image: prom/prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml
+```
+
+You should change `imageuser/imagename` to whatever you specified when building your custom Fn image.
+
+You need to work in this directory
+```
+cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
+```
+Now start your custom Fn image and Prometheus
+```sh
+docker-compose up
+```
+
+You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-metrics/blob/master/README.md).
+
+## Run your custom Fn image and Prometheus separately
+
+Alternatively you can start your custom Fn image and Prometheus separately. 
+
+### Run your custom image
 
 
 The following command is used to run your custom image. Replace `<ip-address>` with the IP address on which the Fn server is listening:
@@ -48,9 +92,9 @@ docker run --rm --name fnserver -it \
   -e FN_EXT_METRICS_PROM_HOST=<ip-address> imageuser/imagename
 ```
 
-`FN_EXT_METRICS_PROM_HOST` is an environment variable which specifies the host on which the Prometheus server is running. 
+* `FN_EXT_METRICS_PROM_HOST` is an environment variable which specifies the host on which the Prometheus server is running. 
 The default is `localhost`, which doesn't work if the Fn server is running in docker .
-You can also use `FN_EXT_METRICS_PROM_PORT` to specify the port.
+* You can also use `FN_EXT_METRICS_PROM_PORT` to specify the port.
 
 On Linux you can use
 ```sh
@@ -60,15 +104,17 @@ docker run --rm --name fnserver -it \
   -e FN_EXT_METRICS_PROM_HOST=`route | grep default | awk '{print $2}'` imageuser/imagename
 ```
 
-## Start Prometheus
+### Start Prometheus
 
 Before you can use the statistics API you need to start Prometheus.
 
-Now start Prometheus, specifying this config file `prometheus.yml` in this directory:
+Now start Prometheus, specifying the example Prometheus config file [prometheus.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/prometheus.yml) in this directory:
 ```
   docker run --name=prometheus -d -p 9090:9090 \
     -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml \
     --link fnserver prom/prometheus
 ```
-`prometheus.yml` configures Prometheus to scrape metrics from a Fn server running on `fnserver:8080`, where `fnserver` is an alias that is set in the command  above to refer to a container named `fnserver` in which the Fn server is expected to be running.
+[prometheus.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/prometheus.yml) configures Prometheus to scrape metrics from a Fn server running on `fnserver:8080`, where `fnserver` is an alias that is set in the command  above to refer to a container named `fnserver` in which the Fn server is expected to be running.
+
+You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-metrics/blob/master/README.md).
 

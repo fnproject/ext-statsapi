@@ -1,0 +1,18 @@
+version: '3'
+services:
+  fnserver:
+    image: imageuser/imagename
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $PWD/data:/app/data
+    environment:
+    - FN_EXT_METRICS_PROM_HOST=prometheus
+  prometheus:
+    image: prom/prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml
