@@ -17,6 +17,6 @@ type metricsResponse struct {
 }
 
 type metricsTimeValuePair struct {
-	Time  int64
-	Value float64
+	Time  int64   `json:"time"`
+	Value float64 `json:"value"`
 }
