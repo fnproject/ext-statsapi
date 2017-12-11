@@ -62,11 +62,17 @@ services:
       - ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml
 ```
 
-Now start your custom Fn image and Prometheus
+This starts your custom Fn image. The environment variable `FN_EXT_METRICS_PROM_HOST` is used to specify that the Fn server should fetch
+statistics from a Prometheus server running on the `prometheus:9090", where   `prometheus1` is defined in 
+[docker-compose.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/docker-compose.yml)
+to refer to the Prometheus server.
 
-```
-cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
-```
+It also starts Prometheus using the config file [prometheus.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/prometheus.yml) 
+which configures Prometheus to scrape metrics from a Fn server running on `fnserver:8080`, where `fnserver` is defined in
+[docker-compose.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/docker-compose.yml)
+to refer to the Fn server.
+
+Now start your custom Fn image and Prometheus
 
 ```sh
 docker-compose up
