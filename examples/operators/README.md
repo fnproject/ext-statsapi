@@ -4,6 +4,11 @@ This example shows you how to build a custom Fn server docker image containing t
 
 This will be of particular interest to end users and operators.
 
+It describes two alternative ways to run the custom Fn server docker image:
+
+* [Run your custom Fn image and Prometheus using Docker Compose](/examples/operators/README.md#run-your-custom-fn-image-and-prometheus-using-docker-compose)
+* [Run your custom Fn image and Prometheus separately](/examples/operators/README.md#run-your-custom-fn-image-and-prometheus-separately)
+
 ## Configure `ext.yaml`
 
 You need just one file, `ext.yaml`, in which you must list the extensions to be included in your custom Fn server image. 
@@ -63,7 +68,7 @@ services:
 ```
 
 This starts your custom Fn image. The environment variable `FN_EXT_METRICS_PROM_HOST` is used to specify that the Fn server should fetch
-statistics from a Prometheus server running on the `prometheus:9090", where   `prometheus1` is defined in 
+statistics from a Prometheus server running on the `prometheus:9090`, where   `prometheus` is defined in 
 [docker-compose.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/docker-compose.yml)
 to refer to the Prometheus server.
 
