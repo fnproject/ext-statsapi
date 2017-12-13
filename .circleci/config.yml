@@ -31,12 +31,14 @@ jobs:
       # run demo extended fn server
       - run:
           name: Running demo extended Fn server
-          command: |
-            ./ext-metrics
-            sleep 5
+          command: ./ext-metrics
           background: true
-      - run: go test
-      
+      - run: 
+          name: Running tests on extended Fn server
+          command: |
+            sleep 5
+            go test ./...
+            
 #      # update Docker
 #      - run: |
 #          docker version
