@@ -12,23 +12,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Update go
-          command: |   
-            go version
-            go env GOROOT
-            mkdir tmp
-            cd tmp
-            sudo rm -rf /usr/local/go
-            wget https://storage.googleapis.com/golang/go$GOVERSION.$OS-$ARCH.tar.gz
-            sudo tar -C /usr/local -xzf go$GOVERSION.$OS-$ARCH.tar.gz     
-            go version      
-      - run: 
-          name: Install glide
-          command: |
-            mkdir $GOPATH/bin
-            export PATH=$GOPATH/bin:$PATH
-            curl https://glide.sh/get | sh
-      - run:
           name: Build demo extended Fn server  
           command: |
             glide install
