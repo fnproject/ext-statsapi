@@ -21,7 +21,6 @@ jobs:
       - OS=linux
       - ARCH=amd64
     steps:
-      - checkout
       - run:
           name: Update go
           command: |
@@ -89,7 +88,6 @@ jobs:
       - OS=linux
       - ARCH=amd64
     steps:
-      - checkout
       - run:
           name: Update go
           command: |
