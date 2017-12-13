@@ -22,8 +22,10 @@ jobs:
           sudo tar -C /usr/local -xzf go$GOVERSION.$OS-$ARCH.tar.gz
       - run: go version
       # build demo extended fn server
-      - run: curl https://glide.sh/get | sh
-      - run: glide install -v
+      - run: |
+          mkdir $GOPATH/bin
+          curl https://glide.sh/get | sh
+          glide install -v
       - run: go build 
       - run: go test
       
