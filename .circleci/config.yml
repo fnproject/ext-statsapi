@@ -11,16 +11,6 @@ jobs:
       - ARCH=amd64
     steps:
       - checkout
-  test-custom-executable:
-    machine:
-      image: circleci/classic:201708-01
-    working_directory: ~/go/src/github.com/fnproject/ext-metrics
-    environment: # apparently expansion doesn't work here yet: https://discuss.circleci.com/t/environment-variable-expansion-in-working-directory/11322
-      - GOPATH=/home/circleci/go
-      - GOVERSION=1.9.1
-      - OS=linux
-      - ARCH=amd64
-    steps:
       - run:
           name: Update go
           command: |
@@ -33,28 +23,34 @@ jobs:
             sudo tar -C /usr/local -xzf go$GOVERSION.$OS-$ARCH.tar.gz
             go version
       - run:
-          name: Install glide
-          command: |
-            mkdir $GOPATH/bin
-            export PATH=$GOPATH/bin:$PATH
-            curl https://glide.sh/get | sh
-      - run:
-          name: Build demo extended Fn server
-          command: |
-            export PATH=$GOPATH/bin:$PATH
-            glide install
-            go build
-      - run:
-          name: Start demo extended Fn server (in the background)
-          command: ./ext-metrics
-          background: true
-      - run:
           name: Update Docker
           command: |
             docker version
             sudo service docker stop
             curl -fsSL https://get.docker.com/ | sudo sh
             docker version
+      - run:
+          name: Install glide
+          command: |
+            mkdir $GOPATH/bin
+            export PATH=$GOPATH/bin:$PATH
+            curl https://glide.sh/get | sh
+      - run:
+          name: Get dependencies
+          command: |
+            export PATH=$GOPATH/bin:$PATH
+            glide install
+      #
+      # Build and test custom Fn server executable
+      #      
+      - run:
+          name: Build custom Fn server executable
+          command: |
+            go build
+      - run:
+          name: Start demo extended Fn server (in the background)
+          command: ./ext-metrics
+          background: true
       - run:
           name: Start Prometheus (in the background)
           command: docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
@@ -78,83 +74,24 @@ jobs:
             name: Install Fn CLI
             command: |
               curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
-  test-custom-image:
-    machine:
-      image: circleci/classic:201708-01
-    working_directory: ~/go/src/github.com/fnproject/ext-metrics
-    environment: # apparently expansion doesn't work here yet: https://discuss.circleci.com/t/environment-variable-expansion-in-working-directory/11322
-      - GOPATH=/home/circleci/go
-      - GOVERSION=1.9.1
-      - OS=linux
-      - ARCH=amd64
-    steps:
+      #
+      # Build and test custom Fn server docker image
+      #           
       - run:
-          name: Update go
-          command: |
-            go version
-            go env GOROOT
-            mkdir tmp
-            cd tmp
-            sudo rm -rf /usr/local/go
-            wget https://storage.googleapis.com/golang/go$GOVERSION.$OS-$ARCH.tar.gz
-            sudo tar -C /usr/local -xzf go$GOVERSION.$OS-$ARCH.tar.gz
-            go version
-      - run:
-          name: Install glide
-          command: |
-            mkdir $GOPATH/bin
-            export PATH=$GOPATH/bin:$PATH
-            curl https://glide.sh/get | sh
-      - run:
-          name: Build demo extended Fn server
-          command: |
-            export PATH=$GOPATH/bin:$PATH
-            glide install
-            go build
-      - run:
-          name: Start demo extended Fn server (in the background)
-          command: ./ext-metrics
-          background: true
-      - run:
-          name: Update Docker
-          command: |
-            docker version
-            sudo service docker stop
-            curl -fsSL https://get.docker.com/ | sudo sh
-            docker version
-      - run:
-          name: Start Prometheus (in the background)
-          command: docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
-      - run:
-          name: Run tests on demo extended Fn server
-          command: |
-            sleep 5
-            go test ./...
-      - run:
-           name: Terminate Prometheus
-           command: |
-             docker ps
-             docker kill prometheus
-             docker ps
-      - run:
-            name: Terminate demo extended Fn server 
+            name: Install Docker Compose
             command: |
-              ps -ef | grep "/ext-metrics" | grep -v grep
-              ps -ef | grep "/ext-metrics" | grep -v grep | awk '{print "kill -9 " $2}' | sh
+              sudo curl -L https://github.com/docker/compose/releases/download/1.17.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
       - run:
-            name: Install Fn CLI
+            name: Build custom Fn server docker image 
             command: |
-              curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh 
-workflows:
-  version: 2
-  build-and-test:
-    jobs:
-      - build
-      - test-custom-executable:
-          requires:
-            - build
-      - test-custom-image:
-          requires:
-            - build
+              cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
+              fn build-server -t imageuser/imagename
+      - run:
+            name: Start custom Fn server docker image and Prometheus
+            command: |
+              cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
+              docker-compose up
+              
 
               
