@@ -67,7 +67,8 @@ jobs:
        - run:
              name: Install fn CLI
              command: |
-               curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh # installs in /usr/local/bin
+# installs in /usr/local/bin             
+               curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh 
                fn --version
 #      - run: docker version
 #      - run: make docker-build
