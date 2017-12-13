@@ -22,8 +22,8 @@ jobs:
           sudo tar -C /usr/local -xzf go$GOVERSION.$OS-$ARCH.tar.gz
       - run: go version
       # build demo extended fn server
-      - run go build 
-      - run go test
+      - run: go build 
+      - run: go test
       
 #      # update Docker
 #      - run: |
