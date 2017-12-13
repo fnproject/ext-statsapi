@@ -82,5 +82,5 @@ func send(t *testing.T, url string) {
 		}
 		t.Fatal("Status="+thisErrorResponse.Status+":"+thisErrorResponse.Error)
 	}
-	t.Fatal("Failing test to force log output to be visible")
+	//t.Fatal("Failing test to force log output to be visible")
 }
