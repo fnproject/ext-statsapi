@@ -61,14 +61,14 @@ jobs:
       - run:
             name: Terminate demo extended Fn server 
             command: |
-              ps -ef | grep "/ext-metrics" | grep -v grep
+              #ps -ef | grep "/ext-metrics" | grep -v grep
               ps -ef | grep "/ext-metrics" | grep -v grep | awk '{print "kill -9 " $2}' | sh
-              ps -ef | grep "/ext-metrics" | grep -v grep             
+              #ps -ef | grep "/ext-metrics" | grep -v grep             
        - run:
              name: Install fn CLI
              command: |
                curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh # installs in /usr/local/bin
-               ./  
+               fn --version 
 #      - run: docker version
 #      - run: make docker-build
 #      - run: make install
