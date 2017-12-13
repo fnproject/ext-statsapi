@@ -30,9 +30,12 @@ jobs:
       - run: go build 
       # run demo extended fn server
       - run:
-          name: Running demo extended Fn server
+          name: Starting demo extended Fn server
           command: ./ext-metrics
           background: true
+      - run: 
+          name: Starting Prometheus
+          command: docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheu
       - run: 
           name: Running tests on extended Fn server
           command: |
