@@ -13,16 +13,16 @@ jobs:
       - checkout
       - run:
           name: Update go
-          command: |   
+          command: |
             go version
             go env GOROOT
             mkdir tmp
             cd tmp
             sudo rm -rf /usr/local/go
             wget https://storage.googleapis.com/golang/go$GOVERSION.$OS-$ARCH.tar.gz
-            sudo tar -C /usr/local -xzf go$GOVERSION.$OS-$ARCH.tar.gz     
-            go version      
-      - run: 
+            sudo tar -C /usr/local -xzf go$GOVERSION.$OS-$ARCH.tar.gz
+            go version
+      - run:
           name: Install glide
           command: |
             mkdir $GOPATH/bin
@@ -62,7 +62,6 @@ jobs:
             command: |
               ps -ef | grep "/ext-metrics" | grep -v grep
               ps -ef | grep "/ext-metrics" | grep -v grep | awk '{print "kill -9 " $2}' | sh
-              ps -ef | grep "/ext-metrics" | grep -v grep
               
               
 #      - run: docker version
