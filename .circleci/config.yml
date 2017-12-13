@@ -12,10 +12,26 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build demo extended Fn server  
+          name: Update go
+          command: |   
+            go version
+            go env GOROOT
+            mkdir tmp
+            cd tmp
+            sudo rm -rf /usr/local/go
+            wget https://storage.googleapis.com/golang/go$GOVERSION.$OS-$ARCH.tar.gz
+            sudo tar -C /usr/local -xzf go$GOVERSION.$OS-$ARCH.tar.gz     
+            go version      
+      - run: 
+          name: Install glide
           command: |
-            glide install
-            go build
+            mkdir $GOPATH/bin
+            export PATH=$GOPATH/bin:$PATH
+            curl https://glide.sh/get | sh
+            glide install 
+      - run:
+          name: Build demo extended Fn server  
+          command: go build
       - run:
           name: Start demo extended Fn server (in the background)
           command: ./ext-metrics
@@ -44,14 +60,11 @@ jobs:
       - run:
             name: Terminate demo extended Fn server 
             command: |
-              ps -ef | grep "/ext-metrics"
+              ps -ef | grep "/ext-metrics" | grep -v grep
               ps -ef | grep "/ext-metrics" | grep -v grep | awk '{print "kill -9 " $2}' | sh
-              ps -ef | grep "/ext-metrics"           
-       - run:
-             name: Install fn CLI
-             command: |
-               curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh # installs in /usr/local/bin
-               fn --version 
+              ps -ef | grep "/ext-metrics" | grep -v grep
+              
+              
 #      - run: docker version
 #      - run: make docker-build
 #      - run: make install
