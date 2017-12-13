@@ -22,6 +22,7 @@ jobs:
           sudo tar -C /usr/local -xzf go$GOVERSION.$OS-$ARCH.tar.gz
       - run: go version
       # build demo extended fn server
+      - run: glide install -v
       - run: go build 
       - run: go test
       
