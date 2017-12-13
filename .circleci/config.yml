@@ -28,10 +28,11 @@ jobs:
             mkdir $GOPATH/bin
             export PATH=$GOPATH/bin:$PATH
             curl https://glide.sh/get | sh
-            glide install 
       - run:
-          name: Build demo extended Fn server  
-          command: go build
+          name: Build demo extended Fn server
+          command: |
+            glide install
+            go build
       - run:
           name: Start demo extended Fn server (in the background)
           command: ./ext-metrics
