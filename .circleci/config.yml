@@ -25,7 +25,7 @@ jobs:
       - run: |
           mkdir $GOPATH/bin
           curl https://glide.sh/get | sh
-          glide install -v
+          $GOPATH/bin/glide install -v
       - run: go build 
       - run: go test
       
