@@ -31,7 +31,9 @@ jobs:
       # run demo extended fn server
       - run:
           name: Running demo extended Fn server
-          command: ./ext-metrics
+          command: |
+            ./ext-metrics
+            sleep 5
           background: true
       - run: go test
       
