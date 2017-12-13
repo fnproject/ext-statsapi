@@ -64,12 +64,10 @@ jobs:
             command: |
               ps -ef | grep "/ext-metrics" | grep -v grep
               ps -ef | grep "/ext-metrics" | grep -v grep | awk '{print "kill -9 " $2}' | sh
-       - run:
-             name: Install fn CLI
-             command: |
-# installs in /usr/local/bin             
-               curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh 
-               fn --version
+      - run:
+            name: Install Fn CLI
+            command: |
+              curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
 #      - run: docker version
 #      - run: make docker-build
 #      - run: make install
