@@ -28,10 +28,11 @@ jobs:
           curl https://glide.sh/get | sh
           glide install 
       - run: go build 
-      - run: 
-          - ./ext-metrics:
-                background: true
-          - sleep 5
+      # run demo extended fn server
+      - run:
+          name: Running demo extended Fn server
+          command: ./ext-metrics
+          background: true
       - run: go test
       
 #      # update Docker
