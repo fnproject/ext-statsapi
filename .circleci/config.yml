@@ -63,8 +63,7 @@ jobs:
             command: |
               ps -ef | grep "/ext-metrics" | grep -v grep
               ps -ef | grep "/ext-metrics" | grep -v grep | awk '{print "kill -9 " $2}' | sh
-              ps -ef | grep "/ext-metrics" | grep -v grep
-              
+              ps -ef | grep "/ext-metrics" | grep -v grep             
        - run:
              name: Install fn CLI
              command: |
