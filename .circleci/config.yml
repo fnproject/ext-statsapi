@@ -28,6 +28,10 @@ jobs:
           curl https://glide.sh/get | sh
           glide install 
       - run: go build 
+      - run: 
+          - ./ext-metrics:
+                background: true
+          - sleep 5
       - run: go test
       
 #      # update Docker
