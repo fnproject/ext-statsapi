@@ -25,6 +25,8 @@ jobs:
       - run: |
           mkdir $GOPATH/bin
           curl https://glide.sh/get | sh
+          echo "Checking glide is present"
+          ls $GOPATH/bin/glide
           $GOPATH/bin/glide install -v
       - run: go build 
       - run: go test
