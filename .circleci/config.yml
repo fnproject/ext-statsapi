@@ -59,6 +59,8 @@ jobs:
           command: |
             sleep 5
             export PATH=/usr/local/bin:$PATH # Add fn to path
+            echo $PATH
+            ls /usr/local/bin
             bash test/create.bash
             sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
             bash test/run-cold-sync.bash
