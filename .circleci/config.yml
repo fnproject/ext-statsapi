@@ -70,6 +70,8 @@ jobs:
             bash test/run-hot-sync.bash
             bash test/run-hot-async.bash
             sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
+            curl localhost:8080/stats
+            curl http://localhost:8080/v1/statistics
             go test ./statistics/
       - run:
           name: Terminate Prometheus
