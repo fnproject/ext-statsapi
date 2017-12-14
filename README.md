@@ -137,9 +137,3 @@ If there were no failures the array may be empty.
 
 * ~Duration metrics~
 
-## Running the tests
-
-To run the tests
-```sh
-go test ./...
-```

@@ -1,0 +1,6 @@
+name: imageuser/hello-cold-async-b1
+version: 0.0.8
+runtime: go
+entrypoint: ./func
+type: async
+timeout: 60
