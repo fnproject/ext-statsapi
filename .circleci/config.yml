@@ -55,6 +55,10 @@ jobs:
           name: Start Prometheus (in the background)
           command: docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
       - run:
+          name: Install Fn CLI
+          command: |
+            curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
+      - run:
           name: Run tests on demo extended Fn server
           command: |
             sleep 5
@@ -80,10 +84,6 @@ jobs:
           command: |
             ps -ef | grep "/ext-metrics" | grep -v grep
             ps -ef | grep "/ext-metrics" | grep -v grep | awk '{print "kill -9 " $2}' | sh
-      - run:
-          name: Install Fn CLI
-          command: |
-            curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
       #
       # Build and test custom Fn server docker image
       #           

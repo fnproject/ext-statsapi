@@ -1,6 +1,6 @@
 WD=$PWD
 cd $GOPATH/src/github.com/fnproject/ext-metrics/test/hello-cold-sync-a
-/usr/local/bin/fn deploy --all --local
+fn deploy --all --local
 cd $GOPATH/src/github.com/fnproject/ext-metrics/test/hello-cold-async-a
 fn deploy --all --local
 cd $GOPATH/src/github.com/fnproject/ext-metrics/test/hello-cold-async-b
