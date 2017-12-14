@@ -1,0 +1,5 @@
+name: imageuser/hello-hot-async-a1
+version: 0.0.13
+runtime: docker
+type: async
+format: http

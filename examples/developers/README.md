@@ -71,4 +71,27 @@ docker run --name=prometheus -d -p 9090:9090 \
   --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
 ```
 
-You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-metrics/blob/master/README.md).
+You can now deploy and run functions, try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-metrics/blob/master/README.md), or run the tests.
+
+## Run the tests
+
+With the custom Fn server and Prometheus running, first create some functions to test
+
+```sh
+cd $GOPATH/src/github.com/fnproject/ext-metrics/test
+bash create.bash
+```
+
+Now call these functions to generate some statistics. You can run this repeatedly as required.
+```sh
+bash run-async.bash
+bash run-hot-async.bash
+
+```
+
+Now run the tests
+
+
+```sh
+go test ./...
+```
