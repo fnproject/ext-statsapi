@@ -58,13 +58,20 @@ jobs:
           name: Run tests on demo extended Fn server
           command: |
             sleep 5
-            go test ./...
+            bash test/create.bash
+            sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
+            bash test/run-cold-sync.bash
+            bash test/run-cold-async.bash
+            bash test/run-hot-sync.bash
+            bash test/run-hot-async.bash
+            go test ./statistics/
       - run:
            name: Terminate Prometheus
            command: |
              docker ps
              docker kill prometheus
              docker ps
+             sudo rm -r data
       - run:
             name: Terminate demo extended Fn server 
             command: |
@@ -80,31 +87,39 @@ jobs:
       - run:
             name: Install Docker Compose
             command: |
-              [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skip this step as not the master branch"; exit 0; }
+              [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skipping this step as this is not the master branch"; exit 0; }
               sudo curl -L https://github.com/docker/compose/releases/download/1.17.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
               sudo chmod +x /usr/local/bin/docker-compose
       - run:
             name: Build custom Fn server docker image 
             command: |
-              [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skip this step as not the master branch"; exit 0; }
+              [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skipping this step as this is not the master branch"; exit 0; }
               cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
               fn build-server -t imageuser/imagename
       - run:
             name: Start custom Fn server docker image and Prometheus
             command: |
-              [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skip this step as not the master branch"; exit 0; }
+              [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skipping this step as this is not the master branch"; exit 0; }
               cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
               docker-compose up -d
       - run:
           name: Run tests on custom Fn server docker image
           command: |
-            [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skip this step as not the master branch"; exit 0; }
+              [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skipping this step as this is not the master branch"; exit 0; }
             sleep 5
-            go test ./...              
+            bash test/create.bash
+            sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
+            bash test/run-cold-sync.bash
+            bash test/run-cold-async.bash
+            bash test/run-hot-sync.bash
+            bash test/run-hot-async.bash
+            go test ./statistics/            
       - run:
             name: Stop custom Fn server docker image and Prometheus
             command: |
-              [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skip this step as not the master branch"; exit 0; }
+              [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skipping this step as this is not the master branch"; exit 0; }
               cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
               docker-compose down
+              sudo rm -r data
+              
               
