@@ -62,15 +62,14 @@ jobs:
           name: Run tests on demo extended Fn server
           command: |
             sleep 5
-            export PATH=/usr/local/bin:$PATH # Add fn to path
             echo $PATH
-            ls /usr/local/bin
+            export PATH=/usr/local/bin:$PATH # Add fn to path - is this needed
             bash test/create.bash
-            sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
             bash test/run-cold-sync.bash
             bash test/run-cold-async.bash
             bash test/run-hot-sync.bash
             bash test/run-hot-async.bash
+            sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
             go test ./statistics/
       - run:
           name: Terminate Prometheus
@@ -110,14 +109,15 @@ jobs:
           command: |
             [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skipping this step as this is not the master branch"; exit 0; }
             sleep 5
-            export PATH=/usr/local/bin:$PATH # Add fn to path
+            echo $PATH
+            export PATH=/usr/local/bin:$PATH # Add fn to path - is this needed
             bash test/create.bash
-            sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
             bash test/run-cold-sync.bash
             bash test/run-cold-async.bash
             bash test/run-hot-sync.bash
             bash test/run-hot-async.bash
-            go test ./statistics/            
+            sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
+            go test ./statistics/          
       - run:
           name: Stop custom Fn server docker image and Prometheus
           command: |
