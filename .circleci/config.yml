@@ -62,16 +62,19 @@ jobs:
           name: Run tests on demo extended Fn server
           command: |
             sleep 5
-            echo $PATH
-            export PATH=/usr/local/bin:$PATH # Add fn to path - is this needed
             bash test/create.bash
             bash test/run-cold-sync.bash
             bash test/run-cold-async.bash
             bash test/run-hot-sync.bash
             bash test/run-hot-async.bash
             sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
+            echo
             curl localhost:8080/stats
+            echo 
             curl http://localhost:8080/v1/statistics
+            echo
+            curl http://localhost:8080/metrics
+            echo
             go test ./statistics/
       - run:
           name: Terminate Prometheus
@@ -111,8 +114,6 @@ jobs:
           command: |
             [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skipping this step as this is not the master branch"; exit 0; }
             sleep 5
-            echo $PATH
-            export PATH=/usr/local/bin:$PATH # Add fn to path - is this needed
             bash test/create.bash
             bash test/run-cold-sync.bash
             bash test/run-cold-async.bash
