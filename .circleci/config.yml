@@ -65,7 +65,6 @@ jobs:
             echo ---------------- $AD
             echo ---------------- run
             docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host=$AD prom/prometheus
-#            docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
             echo ---------------- exec1
             docker exec -it prometheus  cat /etc/hosts
             echo ---------------- exec2
