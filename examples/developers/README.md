@@ -75,23 +75,20 @@ You can now deploy and run functions, try out the statistics API extension as de
 
 ## Run the tests
 
-With the custom Fn server and Prometheus running, first create some functions to test
+With the custom Fn server and Prometheus running, first create some functions to test and call these functions to gerenerate some statistics.
 
 ```sh
-cd $GOPATH/src/github.com/fnproject/ext-metrics/test
-bash create.bash
+bash test/create.bash
+bash test/run-cold-sync.bash
+bash test/run-cold-async.bash
+bash test/run-hot-sync.bash
+bash test/run-hot-async.bash
+go test ./statistics/
 ```
 
-Now call these functions to generate some statistics. You can run this repeatedly as required.
-```sh
-bash run-async.bash
-bash run-hot-async.bash
-
-```
-
-Now run the tests
+Wait for a minute or two for the functions to complete (these tests count the number of completed calls). Then run the tests
 
 
 ```sh
-go test ./...
+go test ./statistics/
 ```

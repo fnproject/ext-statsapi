@@ -125,15 +125,4 @@ If there were no failures the array may be empty.
 
 * The `completed` metric will be replaced a new metric `calls` which will be a count of all completed calls, including failed calls.
 
-* ~Currently it is assumed that the Prometheus server is on `localhost:9090`. This needs to be configurable.~
-
-* ~Per-application metrics~
-
-* ~Per-function (route) metrics~
-
-* Proper tests
-
-* Replace `completed` and `failed` with new metrics that conform to the requirements
-
-* ~Duration metrics~
 

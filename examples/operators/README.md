@@ -112,17 +112,3 @@ docker run --rm --name fnserver -it \
   -e FN_EXT_METRICS_PROM_HOST=`route | grep default | awk '{print $2}'` imageuser/imagename
 ```
 
-### Start Prometheus
-
-Before you can use the statistics API you need to start Prometheus.
-
-Now start Prometheus, specifying the example Prometheus config file [prometheus.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/prometheus.yml) in this directory:
-```
-  docker run --name=prometheus -d -p 9090:9090 \
-    -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml \
-    --link fnserver prom/prometheus
-```
-[prometheus.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/prometheus.yml) configures Prometheus to scrape metrics from a Fn server running on `fnserver:8080`, where `fnserver` is an alias that is set in the command  above to refer to a container named `fnserver` in which the Fn server is expected to be running.
-
-You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-metrics/blob/master/README.md).
-
