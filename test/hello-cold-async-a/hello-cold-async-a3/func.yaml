@@ -1,5 +1,5 @@
 name: imageuser/hello-cold-async-a3
-version: 0.0.15
+version: 0.0.11
 runtime: go
 entrypoint: ./func
 type: async

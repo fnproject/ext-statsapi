@@ -132,5 +132,3 @@ jobs:
             cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
             docker-compose down
             sudo rm -r data
-              
-              
