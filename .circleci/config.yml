@@ -54,17 +54,21 @@ jobs:
       - run:
           name: Start Prometheus (in the background)
           command: |
-            echo "ip addr show"
+            echo ---------------- "ip addr show"
             ip addr show
-            echo "route"
+            cho ----------------  "route"
             route
-            echo awk
+            cho ----------------  awk
             route | grep default | awk '{print $2}'
-            echo run
-            docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
-            echo exec1
+            cho ----------------  AD
+            export AD=`ip -4 addr show scope global dev enp0s3 | grep inet | awk '{print $2}' | cut -d / -f 1`
+			echo ---------------- $AD
+			echo ---------------- run
+            docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host=$AD prom/prometheus
+#            docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
+            echo ---------------- exec1
             docker exec -it prometheus  cat /etc/hosts
-            echo exec2
+            echo ---------------- exec2
             docker exec -it prometheus  cat /etc/prometheus/prometheus.yml            
       - run:
           name: Install Fn CLI
