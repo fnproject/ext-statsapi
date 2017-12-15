@@ -58,13 +58,13 @@ jobs:
             ip addr show
             echo "route"
             route
-            echo
-            route | grep default | awk '{print $2}
-            echo
+            echo awk
+            route | grep default | awk '{print $2}'
+            echo run
             docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
-            echo
+            echo exec1
             docker exec -it prometheus  cat /etc/hosts
-            echo
+            echo exec2
             docker exec -it prometheus  cat /etc/prometheus/prometheus.yml            
       - run:
           name: Install Fn CLI
