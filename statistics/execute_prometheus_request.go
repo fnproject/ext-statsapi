@@ -55,7 +55,7 @@ func executePrometheusRequest(url string) ([]metricsTimeValuePair, error) {
 
 	if len(thisPromQueryRangeData.Data.Result) > 1 {
 		//  we must have got the query wrong
-		return nil, errors.New("data array returned by Prometheus has more than one element")
+		return nil, errors.New("data array returned by Prometheus has more than one element: string(body[:])")
 	}
 
 	// how many data time-value pairs have we been given
