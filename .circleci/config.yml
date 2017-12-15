@@ -53,25 +53,13 @@ jobs:
           background: true
       - run:
           name: Start Prometheus (in the background)
-          command: |
-            echo ---------------- "ip addr show"
-            ip addr show
-            echo ----------------  "route"
-            route
-            echo ----------------  awk
-            route | grep default | awk '{print $2}'
-            
+          command: |           
             export HOST_NETWORK=`ip -4 addr show | grep default | grep -v lo: | head -1 | awk '{print $2}' | sed 's/://'`
-            
-            echo ----------------  HOST_ADDR
+            echo ----------------  HOST_NETWORK=$HOST_NETWORK
             export HOST_ADDR=`ip -4 addr show scope global dev $HOST_NETWORK | grep inet | awk '{print $2}' | cut -d / -f 1`
-            echo ---------------- $HOST_ADDR
-            echo ---------------- run
+            echo ---------------- HOST_ADDR=$HOST_ADDR
+            echo
             docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:$HOST_ADDR" prom/prometheus
-            echo ---------------- exec1
-            docker exec -it prometheus  cat /etc/hosts
-            echo ---------------- exec2
-            docker exec -it prometheus  cat /etc/prometheus/prometheus.yml            
       - run:
           name: Install Fn CLI
           command: |
@@ -88,8 +76,6 @@ jobs:
             sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
             echo
             curl http://localhost:8080/v1/statistics
-            echo
-            curl http://localhost:8080/metrics
             echo
             go test ./statistics/
       - run:
