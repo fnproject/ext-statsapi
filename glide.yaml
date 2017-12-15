@@ -1,7 +1,7 @@
 package: github.com/fnproject/ext-metrics
 import:
 - package: github.com/fnproject/fn
-  version: fix_spans_for_prom
+  version: master
   subpackages:
   - api/models
   - api/server
