@@ -36,6 +36,30 @@ func TestNeverCalled(t *testing.T) {
 	verifySuccessfulJSON(t, response, 0)
 }
 
+func TestAllFuncs(t *testing.T) {
+	// verify stats for all functions
+	// Assumes all the following have been run
+	// test/run-cold-sync.bash
+	// test/run-cold-async.bash
+	// test/run-hot-sync.bash
+	// test/run-hot-async.bash
+	url := "http://localhost:8080/v1/statistics"
+	response, err := getJSON(t, url)
+	assertNoError(t, "getJSON", err)
+	verifySuccessfulJSON(t, response, 10)
+}
+
+func TestAllFuncsPerApp(t *testing.T) {
+	// verify stats across all three functions in the app hello-cold-async-a
+	// Assumes all the following have been run
+	// test/run-cold-sync.bash
+	// test/run-cold-async.bash
+	url := "http://localhost:8080/v1/apps/hello-cold-async-a/statistics"
+	response, err := getJSON(t, url)
+	assertNoError(t, "getJSON", err)
+	verifySuccessfulJSON(t, response, 60)
+}
+
 // Test sync cold
 // Assumes test/run-cold-sync.bash has been run
 func TestSyncCold(t *testing.T) {
@@ -140,7 +164,7 @@ func verifySuccessfulJSON(t *testing.T, response interface{}, expectedCompleted 
 		lastValue := lastTimeAndValuePairAsMap["value"]
 		lastValueAsFloat64 := lastValue.(float64)
 		lastvalueAsInt := int(lastValueAsFloat64)
-		assertIntsEqual(t, "Completed count", lastvalueAsInt, expectedCompleted)
+		assertIntsEqual(t, "Completed count", expectedCompleted,lastvalueAsInt)
 	} else {
 		// Completed array is empty which implies a completed count of zero
 		assertIntsEqual(t, "Completed array is empty", expectedCompleted, 0)
