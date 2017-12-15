@@ -75,7 +75,7 @@ jobs:
             bash test/run-hot-async.bash
             sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
             echo
-            curl http://localhost:8080/v1/statistics
+            curl http://localhost:8080/v1/stats
             echo
             go test ./statistics/
       - run:
@@ -124,7 +124,7 @@ jobs:
             bash test/run-hot-async.bash
             sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
             echo
-            curl http://localhost:8080/v1/statistics
+            curl http://localhost:8080/v1/stats
             echo
             go test ./statistics/        
       - run:

@@ -21,7 +21,7 @@ import (
 
 // Test a query which will return an error from the extension (rather than from the main router, such as app or route not found)
 func TestBadRoute(t *testing.T) {
-	url := "http://localhost:8080/v1/apps/hello-cold-sync-a/routes/hello-cold-sync-a1/statistics?step=Wombat"
+	url := "http://localhost:8080/v1/apps/hello-cold-sync-a/routes/hello-cold-sync-a1/stats?step=Wombat"
 	response, err := getJSON(t, url)
 	assertNoError(t, "getJSON", err)
 	verifyFailedJSON(t, response, "Unable to parse step parameter: time: invalid duration Wombat")
@@ -30,7 +30,7 @@ func TestBadRoute(t *testing.T) {
 // Test sync cold
 func TestNeverCalled(t *testing.T) {
 	// verify stats for a function that has never been called (since server startup)
-	url := "http://localhost:8080/v1/apps/hello-cold-async-b/routes/hello-cold-async-b3/statistics"
+	url := "http://localhost:8080/v1/apps/hello-cold-async-b/routes/hello-cold-async-b3/stats"
 	response, err := getJSON(t, url)
 	assertNoError(t, "getJSON", err)
 	verifySuccessfulJSON(t, response, 0)
@@ -43,7 +43,7 @@ func TestAllFuncs(t *testing.T) {
 	// test/run-cold-async.bash
 	// test/run-hot-sync.bash
 	// test/run-hot-async.bash
-	url := "http://localhost:8080/v1/statistics"
+	url := "http://localhost:8080/v1/stats"
 	response, err := getJSON(t, url)
 	assertNoError(t, "getJSON", err)
 	verifySuccessfulJSON(t, response, 120)
@@ -54,7 +54,7 @@ func TestAllFuncsPerApp(t *testing.T) {
 	// Assumes all the following have been run
 	// test/run-cold-sync.bash
 	// test/run-cold-async.bash
-	url := "http://localhost:8080/v1/apps/hello-cold-async-a/statistics"
+	url := "http://localhost:8080/v1/apps/hello-cold-async-a/stats"
 	response, err := getJSON(t, url)
 	assertNoError(t, "getJSON", err)
 	verifySuccessfulJSON(t, response, 60)
@@ -64,7 +64,7 @@ func TestAllFuncsPerApp(t *testing.T) {
 // Assumes test/run-cold-sync.bash has been run
 func TestSyncCold(t *testing.T) {
 	// verify stats for sync cold functions
-	url := "http://localhost:8080/v1/apps/hello-cold-sync-a/routes/hello-cold-sync-a1/statistics"
+	url := "http://localhost:8080/v1/apps/hello-cold-sync-a/routes/hello-cold-sync-a1/stats"
 	response, err := getJSON(t, url)
 	assertNoError(t, "getJSON", err)
 	verifySuccessfulJSON(t, response, 10)
@@ -74,7 +74,7 @@ func TestSyncCold(t *testing.T) {
 // Assumes test/run-cold-async.bash has been run
 func TestAsyncCold(t *testing.T) {
 	// verify stats for async cold functions
-	url := "http://localhost:8080/v1/apps/hello-cold-async-a/routes/hello-cold-async-a2/statistics"
+	url := "http://localhost:8080/v1/apps/hello-cold-async-a/routes/hello-cold-async-a2/stats"
 	response, err := getJSON(t, url)
 	assertNoError(t, "getJSON", err)
 	verifySuccessfulJSON(t, response, 20)
@@ -84,7 +84,7 @@ func TestAsyncCold(t *testing.T) {
 // Assumes test/run-hot-sync.bash has been run
 func TestSyncHot(t *testing.T) {
 	// verify stats for sync hot functions
-	url := "http://localhost:8080/v1/apps/hello-hot-sync-a/routes/hello-hot-sync-a1/statistics"
+	url := "http://localhost:8080/v1/apps/hello-hot-sync-a/routes/hello-hot-sync-a1/stats"
 	response, err := getJSON(t, url)
 	assertNoError(t, "getJSON", err)
 	verifySuccessfulJSON(t, response, 10)
@@ -94,7 +94,7 @@ func TestSyncHot(t *testing.T) {
 // Assumes test/run-hot-async.bash has been run
 func TestAsyncHot(t *testing.T) {
 	// verify stats for async hot functions
-	url := "http://localhost:8080/v1/apps/hello-hot-async-a/routes/hello-hot-async-a1/statistics"
+	url := "http://localhost:8080/v1/apps/hello-hot-async-a/routes/hello-hot-async-a1/stats"
 	response, err := getJSON(t, url)
 	assertNoError(t, "getJSON", err)
 	verifySuccessfulJSON(t, response, 20)
@@ -246,20 +246,20 @@ func assertNotNil(t *testing.T, assertionText string, actual interface{}) {
 
 //func TestGlobalStats(t *testing.T) {
 //	// set neither start time or end time
-//	//url := "http://localhost:8080/v1/statistics"
+//	//url := "http://localhost:8080/v1/stats"
 //
 //	// start time only - pick a time an hour ago (endtime will default to now)
 //	//starttimeString := time.Now().Add(-(time.Duration(60) * time.Minute)).Format(prometheusTimeFormat)
-//	//url := "http://localhost:8080/v1/statistics?starttime=" + starttimeString
+//	//url := "http://localhost:8080/v1/stats?starttime=" + starttimeString
 //
 //	// end time only - pick a time an hour ago (start time will default to 5 mins before that)
 //	//endtimeString := time.Now().Add(-(time.Duration(60) * time.Minute)).Format(prometheusTimeFormat)
-//	//url := "http://localhost:8080/v1/statistics?endtime=" + endtimeString
+//	//url := "http://localhost:8080/v1/stats?endtime=" + endtimeString
 //
 //	// start time and end time - end time is now, start time is 10 mins ago, step is 30s (so expect about 20 values)
 //	endtimeString := time.Now().Format(prometheusTimeFormat)
 //	starttimeString := time.Now().Add(-(time.Duration(10) * time.Minute)).Format(prometheusTimeFormat)
-//	url := "http://localhost:8080/v1/statistics?starttime=" + starttimeString + "&endtime=" + endtimeString + "&step=30s"
+//	url := "http://localhost:8080/v1/stats?starttime=" + starttimeString + "&endtime=" + endtimeString + "&step=30s"
 //
 //	// could also test not setting step
 //	// could also test invalid values for start/end/step

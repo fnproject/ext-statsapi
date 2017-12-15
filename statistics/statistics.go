@@ -26,12 +26,15 @@ func AddEndpoints(s fnext.ExtServer) {
 	promHost = fncommon.GetEnv(EnvPromHost, "localhost")
 	promPort = fncommon.GetEnv(EnvPromPort, "9090")
 	
+	s.AddEndpoint("GET", "/stats", &globalStatisticsHandler{})
 	s.AddEndpoint("GET", "/statistics", &globalStatisticsHandler{})
 
-	// the following will be at /v1/apps/:app_name/statistics
+	// the following will be at /v1/apps/:app_name/stats
+	s.AddAppEndpoint("GET", "/stats", &appStatisticsHandler{})
 	s.AddAppEndpoint("GET", "/statistics", &appStatisticsHandler{})
 
-	// the following will be at /v1/apps/:app_name/routes/:route_name/statistics
+	// the following will be at /v1/apps/:app_name/routes/:route_name/stats
+	s.AddRouteEndpoint("GET", "/stats", &routeStatisticsHandler{})
 	s.AddRouteEndpoint("GET", "/statistics", &routeStatisticsHandler{})
 }
 
