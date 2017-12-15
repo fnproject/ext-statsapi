@@ -56,15 +56,18 @@ jobs:
           command: |
             echo ---------------- "ip addr show"
             ip addr show
-            cho ----------------  "route"
+            echo ----------------  "route"
             route
-            cho ----------------  awk
+            echo ----------------  awk
             route | grep default | awk '{print $2}'
-            cho ----------------  AD
-            export AD=`ip -4 addr show scope global dev enp0s3 | grep inet | awk '{print $2}' | cut -d / -f 1`
-            echo ---------------- $AD
+            
+            export HOST_NETWORK=`ip -4 addr show | grep default | grep -v lo: | head -1 | awk '{print $2}' | sed 's/://'`
+            
+            echo ----------------  HOST_ADDR
+            export HOST_ADDR=`ip -4 addr show scope global dev $HOST_NETWORK | grep inet | awk '{print $2}' | cut -d / -f 1`
+            echo ---------------- $HOST_ADDR
             echo ---------------- run
-            docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host=$AD prom/prometheus
+            docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host=$HOST_ADDR prom/prometheus
             echo ---------------- exec1
             docker exec -it prometheus  cat /etc/hosts
             echo ---------------- exec2
