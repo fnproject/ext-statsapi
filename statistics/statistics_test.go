@@ -46,7 +46,7 @@ func TestAllFuncs(t *testing.T) {
 	url := "http://localhost:8080/v1/statistics"
 	response, err := getJSON(t, url)
 	assertNoError(t, "getJSON", err)
-	verifySuccessfulJSON(t, response, 10)
+	verifySuccessfulJSON(t, response, 120)
 }
 
 func TestAllFuncsPerApp(t *testing.T) {
