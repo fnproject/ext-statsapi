@@ -106,8 +106,8 @@ Here is a sample response:
 }
 ```
 
-The `success` element will be set to success` if the API call is successful. 
-If the API call is unsuccessful then `success` element will be set to `error` and an additional element `error` will contains a description of the failure.
+The `success` element will be set to `success` if the API call is successful. 
+If the API call is unsuccessful then the `success` element will be set to `error` and an additional element `error` will contains a description of the failure.
 
 The `data` element contains elements `completed`, `failed` and `durations`. 
 
