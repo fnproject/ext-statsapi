@@ -58,8 +58,14 @@ jobs:
             ip addr show
             echo "route"
             route
-            docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --network=host prom/prometheus
-#            docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
+            echo
+            route | grep default | awk '{print $2}
+            echo
+            docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
+            echo
+            docker exec -it prometheus  cat /etc/hosts
+            echo
+            docker exec -it prometheus  cat /etc/prometheus/prometheus.yml            
       - run:
           name: Install Fn CLI
           command: |
@@ -75,8 +81,6 @@ jobs:
             bash test/run-hot-async.bash
             sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
             echo
-            curl localhost:8080/stats
-            echo 
             curl http://localhost:8080/v1/statistics
             echo
             curl http://localhost:8080/metrics
