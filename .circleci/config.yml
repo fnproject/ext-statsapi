@@ -123,8 +123,10 @@ jobs:
             bash test/run-hot-sync.bash
             bash test/run-hot-async.bash
             sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
-            echo Running tests
-            go test ./statistics/          
+            echo
+            curl http://localhost:8080/v1/statistics
+            echo
+            go test ./statistics/        
       - run:
           name: Stop custom Fn server docker image and Prometheus
           command: |
