@@ -14,7 +14,7 @@ funcServer.AddExtensionByName(statistics.StatisticsExtensionName())
 ```
 You will need to add the following import statement:
 ```
-"github.com/fnproject/ext-metrics/statistics"
+"github.com/fnproject/ext-statsapi/statistics"
 ```
 There is an [example `main.go`](../../main.go) in the root directory of this project.
 
@@ -26,7 +26,7 @@ These steps describe how to build a custom Fn server using the example [main.go]
 
 You need to work in the root directory of this project
 ```
-cd $GOPATH/src/github.com/fnproject/ext-metrics
+cd $GOPATH/src/github.com/fnproject/ext-statsapi
 ```
 
 Install dependencies:
@@ -44,7 +44,7 @@ go build
 ## Run your custom Fn server
 
 ```sh
-./ext-metrics
+./ext-statsapi
 ```
 
 By default, the metrics API will fetch data from a Prometheus server listening at `localhost:9090`. If a different host or port is required, set the following before starting your custom Fn server:
@@ -61,17 +61,17 @@ The following command starts prometheus in a Docker container, using the config 
 Replace `<ip-address>` with the IP address on which the Fn server is listening:
 ```
 docker run --name=prometheus -d -p 9090:9090 \
-  -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml \
+  -v ${GOPATH}/src/github.com/fnproject/ext-statsapi/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml \
   --add-host="fnserver:<ip-address>" prom/prometheus
 ```    
 On Linux you can use the following:
 ```
 docker run --name=prometheus -d -p 9090:9090 \
-  -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml \
+  -v ${GOPATH}/src/github.com/fnproject/ext-statsapi/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml \
   --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
 ```
 
-You can now deploy and run functions, try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-metrics/blob/master/README.md), or run the tests.
+You can now deploy and run functions, try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-statsapi/blob/master/README.md), or run the tests.
 
 ## Run the tests
 
@@ -83,7 +83,6 @@ bash test/run-cold-sync.bash
 bash test/run-cold-async.bash
 bash test/run-hot-sync.bash
 bash test/run-hot-async.bash
-go test ./statistics/
 ```
 
 Wait for a minute or two for the functions to complete (these tests count the number of completed calls). Then run the tests

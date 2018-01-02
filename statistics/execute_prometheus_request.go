@@ -25,7 +25,7 @@ func executePrometheusRequest(url string) ([]metricsTimeValuePair, error) {
 		return nil, err
 	}
 
-	req.Header.Set("User-Agent", "github.com/fnproject/ext-metrics")
+	req.Header.Set("User-Agent", "github.com/fnproject/ext-statsapi")
 
 	res, doErr := promClient.Do(req)
 	if doErr != nil {
