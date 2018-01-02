@@ -16,7 +16,7 @@ This directory contains an example [ext.yaml](https://github.com/fnproject/ext-s
 
 ```yaml
 extensions:
-- name: github.com/fnproject/ext-statsapi/statistics
+- name: github.com/fnproject/ext-statsapi/stats
 ```
 
 If you require additional extensions, add a `name` element for each one.
@@ -57,7 +57,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - $PWD/data:/app/data
     environment:
-    - FN_EXT_METRICS_PROM_HOST=prometheus
+    - FN_EXT_STATS_PROM_HOST=prometheus
   prometheus:
     image: prom/prometheus
     restart: always
@@ -67,7 +67,7 @@ services:
       - ${GOPATH}/src/github.com/fnproject/ext-statsapi/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml
 ```
 
-This starts your custom Fn image. The environment variable `FN_EXT_METRICS_PROM_HOST` is used to specify that the Fn server should fetch
+This starts your custom Fn image. The environment variable `FN_EXT_STATS_PROM_HOST` is used to specify that the Fn server should fetch
 statistics from a Prometheus server running on the `prometheus:9090`, where   `prometheus` is defined in 
 [docker-compose.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/docker-compose.yml)
 to refer to the Prometheus server.
@@ -97,18 +97,34 @@ The following command is used to run your custom image. Replace `<ip-address>` w
 docker run --rm --name fnserver -it \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v $PWD/data:/app/data -p 8080:8080 \
-  -e FN_EXT_METRICS_PROM_HOST=<ip-address> imageuser/imagename
+  -e FN_EXT_STATS_PROM_HOST=<ip-address> imageuser/imagename
 ```
 
-* `FN_EXT_METRICS_PROM_HOST` is an environment variable which specifies the host on which the Prometheus server is running. 
+* `FN_EXT_STATS_PROM_HOST` is an environment variable which specifies the host on which the Prometheus server is running. 
 The default is `localhost`, which doesn't work if the Fn server is running in docker .
-* You can also use `FN_EXT_METRICS_PROM_PORT` to specify the port.
+* You can also use `FN_EXT_STATS_PROM_PORT` to specify the port.
 
 On Linux you can use
 ```sh
 docker run --rm --name fnserver -it \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v $PWD/data:/app/data -p 8080:8080 \
-  -e FN_EXT_METRICS_PROM_HOST=`route | grep default | awk '{print $2}'` imageuser/imagename
+  -e FN_EXT_STATS_PROM_HOST=`route | grep default | awk '{print $2}'` imageuser/imagename
+```
+### Start Prometheus
+
+The following command starts prometheus in a Docker container, using the config file `prometheus.yml` in this directory.
+Replace `<ip-address>` with the IP address on which the Fn server is listening:
+```
+docker run --name=prometheus -d -p 9090:9090 \
+  -v ${GOPATH}/src/github.com/fnproject/ext-statsapi/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml \
+  --add-host="fnserver:<ip-address>" prom/prometheus
+```    
+On Linux you can use the following:
+```
+docker run --name=prometheus -d -p 9090:9090 \
+  -v ${GOPATH}/src/github.com/fnproject/ext-statsapi/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml \
+  --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
 ```
 
+You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-statsapi/blob/master/README.md).

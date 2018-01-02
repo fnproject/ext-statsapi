@@ -8,7 +8,7 @@ import (
 // These functions are provided to support loading this extension via a custom ext.yaml file
 
 func StatisticsExtensionName() string {
-	return "github.com/fnproject/ext-statsapi/statistics"
+	return "github.com/fnproject/ext-statsapi/stats"
 }
 
 func init() {

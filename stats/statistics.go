@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	EnvPromHost = "FN_EXT_METRICS_PROM_HOST"
-	EnvPromPort = "FN_EXT_METRICS_PROM_PORT"
+	EnvPromHost = "FN_EXT_STATS_PROM_HOST"
+	EnvPromPort = "FN_EXT_STATS_PROM_PORT"
 )
 
 var promHost string

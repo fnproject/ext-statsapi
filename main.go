@@ -6,7 +6,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/fnproject/ext-statsapi/statistics"
+	"github.com/fnproject/ext-statsapi/stats"
 	"github.com/fnproject/fn/api/server"
 )
 
