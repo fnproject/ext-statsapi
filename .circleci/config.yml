@@ -3,7 +3,7 @@ jobs:
   build:
     machine:
       image: circleci/classic:201708-01
-    working_directory: ~/go/src/github.com/fnproject/ext-metrics
+    working_directory: ~/go/src/github.com/fnproject/ext-statsapi
     environment: # apparently expansion doesn't work here yet: https://discuss.circleci.com/t/environment-variable-expansion-in-working-directory/11322
       - GOPATH=/home/circleci/go
       - GOVERSION=1.9.1
@@ -49,7 +49,7 @@ jobs:
             go build
       - run:
           name: Start demo extended Fn server (in the background)
-          command: ./ext-metrics
+          command: ./ext-statsapi
           background: true
       - run:
           name: Start Prometheus (in the background)
@@ -59,7 +59,7 @@ jobs:
             export HOST_ADDR=`ip -4 addr show scope global dev $HOST_NETWORK | grep inet | awk '{print $2}' | cut -d / -f 1`
             echo ---------------- HOST_ADDR=$HOST_ADDR
             echo
-            docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:$HOST_ADDR" prom/prometheus
+            docker run --name=prometheus -d -p 9090:9090 -v ${GOPATH}/src/github.com/fnproject/ext-statsapi/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml --add-host="fnserver:$HOST_ADDR" prom/prometheus
       - run:
           name: Install Fn CLI
           command: |
@@ -88,8 +88,8 @@ jobs:
       - run:
           name: Terminate demo extended Fn server 
           command: |
-            ps -ef | grep "/ext-metrics" | grep -v grep
-            ps -ef | grep "/ext-metrics" | grep -v grep | awk '{print "kill -9 " $2}' | sh
+            ps -ef | grep "/ext-statsapi" | grep -v grep
+            ps -ef | grep "/ext-statsapi" | grep -v grep | awk '{print "kill -9 " $2}' | sh
       #
       # Build and test custom Fn server docker image
       # This can only be run on master (until https://github.com/fnproject/fn/issues/598 is imlemented)
@@ -104,13 +104,13 @@ jobs:
           name: Build custom Fn server docker image 
           command: |
             [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skipping this step as this is not the master branch"; exit 0; }
-            cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
+            cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
             fn build-server -t imageuser/imagename
       - run:
           name: Start custom Fn server docker image and Prometheus
           command: |
             [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skipping this step as this is not the master branch"; exit 0; }
-            cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
+            cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
             docker-compose up -d
       - run:
           name: Run tests on custom Fn server docker image
@@ -131,6 +131,6 @@ jobs:
           name: Stop custom Fn server docker image and Prometheus
           command: |
             [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skipping this step as this is not the master branch"; exit 0; }
-            cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
+            cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
             docker-compose down
             sudo rm -r data

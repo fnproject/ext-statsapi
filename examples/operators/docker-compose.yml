@@ -15,4 +15,4 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ${GOPATH}/src/github.com/fnproject/ext-statsapi/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml

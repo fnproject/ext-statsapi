@@ -12,11 +12,11 @@ It describes two alternative ways to run the custom Fn server docker image:
 ## Configure `ext.yaml`
 
 You need just one file, `ext.yaml`, in which you must list the extensions to be included in your custom Fn server image. 
-This directory contains an example [ext.yaml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/ext.yaml) configured to include a single extension, the statistics API
+This directory contains an example [ext.yaml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/ext.yaml) configured to include a single extension, the statistics API
 
 ```yaml
 extensions:
-- name: github.com/fnproject/ext-metrics/statistics
+- name: github.com/fnproject/ext-statsapi/statistics
 ```
 
 If you require additional extensions, add a `name` element for each one.
@@ -24,9 +24,9 @@ If you require additional extensions, add a `name` element for each one.
 
 ## Build your custom image
 
-We will use the example [ext.yaml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/ext.yaml) in this directory:
+We will use the example [ext.yaml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/ext.yaml) in this directory:
 ```sh
-cd $GOPATH/src/github.com/fnproject/ext-metrics/examples/operators
+cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
 ```
 
 To build your custom image:
@@ -43,7 +43,7 @@ This takes care of configuring the two processes to connect to each other.
 
 Install Docker Compose using [these instructions](https://docs.docker.com/compose/install/). 
 
-We will use the [docker-compose.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/docker-compose.yml) in this directory.
+We will use the [docker-compose.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/docker-compose.yml) in this directory.
 You should change `imageuser/imagename` to whatever you specified when building your custom Fn image.
 
 ```yaml
@@ -64,17 +64,17 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ${GOPATH}/src/github.com/fnproject/ext-metrics/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ${GOPATH}/src/github.com/fnproject/ext-statsapi/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml
 ```
 
 This starts your custom Fn image. The environment variable `FN_EXT_METRICS_PROM_HOST` is used to specify that the Fn server should fetch
 statistics from a Prometheus server running on the `prometheus:9090`, where   `prometheus` is defined in 
-[docker-compose.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/docker-compose.yml)
+[docker-compose.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/docker-compose.yml)
 to refer to the Prometheus server.
 
-It also starts Prometheus using the config file [prometheus.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/prometheus.yml) 
+It also starts Prometheus using the config file [prometheus.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/prometheus.yml) 
 which configures Prometheus to scrape metrics from a Fn server running on `fnserver:8080`, where `fnserver` is defined in
-[docker-compose.yml](https://github.com/fnproject/ext-metrics/blob/master/examples/operators/docker-compose.yml)
+[docker-compose.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/docker-compose.yml)
 to refer to the Fn server.
 
 Now start your custom Fn image and Prometheus
@@ -83,7 +83,7 @@ Now start your custom Fn image and Prometheus
 docker-compose up
 ```
 
-You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-metrics/blob/master/README.md).
+You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-statsapi/blob/master/README.md).
 
 ## Run your custom Fn image and Prometheus separately
 

@@ -110,7 +110,7 @@ func getJSON(t *testing.T, url string) (interface{}, error) {
 		t.Fatal(err.Error())
 	}
 
-	req.Header.Set("User-Agent", "github.com/fnproject/ext-metrics/main-test")
+	req.Header.Set("User-Agent", "github.com/fnproject/ext-statsapi/main-test")
 
 	res, getErr := httpClient.Do(req)
 	if getErr != nil {
@@ -281,7 +281,7 @@ func assertNotNil(t *testing.T, assertionText string, actual interface{}) {
 //		return
 //	}
 //
-//	req.Header.Set("User-Agent", "github.com/fnproject/ext-metrics/main-test")
+//	req.Header.Set("User-Agent", "github.com/fnproject/ext-statsapi/main-test")
 //
 //	res, getErr := httpClient.Do(req)
 //	if getErr != nil {

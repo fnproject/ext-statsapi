@@ -1,4 +1,4 @@
-package: github.com/fnproject/ext-metrics
+package: github.com/fnproject/ext-statsapi
 import:
 - package: github.com/fnproject/fn
   version: master

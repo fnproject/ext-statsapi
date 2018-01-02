@@ -3,7 +3,7 @@ package statistics
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fnproject/ext-metrics/fncommon"
+	"github.com/fnproject/ext-statsapi/fncommon"
 	"github.com/fnproject/fn/api/models"
 	"github.com/fnproject/fn/fnext"
 	"net/http"
