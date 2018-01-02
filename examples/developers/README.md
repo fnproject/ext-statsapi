@@ -14,9 +14,9 @@ funcServer.AddExtensionByName(statistics.StatisticsExtensionName())
 ```
 You will need to add the following import statement:
 ```
-"github.com/fnproject/ext-statsapi/statistics"
+"github.com/fnproject/ext-statsapi/stats"
 ```
-There is an [example `main.go`](../../main.go) in the root directory of this project.
+There is an example [`main.go`](../../main.go) in the root directory of this project.
 
 You then need to install dependencies and build your executable.
 
@@ -49,8 +49,8 @@ go build
 
 By default, the metrics API will fetch data from a Prometheus server listening at `localhost:9090`. If a different host or port is required, set the following before starting your custom Fn server:
 ```
-export FN_EXT_METRICS_PROM_HOST=<host>
-export FN_EXT_METRICS_PROM_PORT=<port>
+export FN_EXT_STATS_PROM_HOST=<host>
+export FN_EXT_STATS_PROM_PORT=<port>
 ```
 
 ## Start Prometheus
@@ -89,5 +89,5 @@ Wait for a minute or two for the functions to complete (these tests count the nu
 
 
 ```sh
-go test ./statistics/
+go test ./stats/
 ```

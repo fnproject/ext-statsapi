@@ -77,7 +77,7 @@ jobs:
             echo
             curl http://localhost:8080/v1/stats
             echo
-            go test ./statistics/
+            go test ./stats/
       - run:
           name: Terminate Prometheus
           command: |
@@ -126,7 +126,7 @@ jobs:
             echo
             curl http://localhost:8080/v1/stats
             echo
-            go test ./statistics/        
+            go test ./stats/        
       - run:
           name: Stop custom Fn server docker image and Prometheus
           command: |
