@@ -16,7 +16,7 @@ You will need to add the following import statement:
 ```
 "github.com/fnproject/ext-statsapi/stats"
 ```
-There is an [example `main.go`](../../main.go) in the root directory of this project.
+There is an example [`main.go`](../../main.go) in the root directory of this project.
 
 You then need to install dependencies and build your executable.
 
@@ -89,5 +89,5 @@ Wait for a minute or two for the functions to complete (these tests count the nu
 
 
 ```sh
-go test ./statistics/
+go test ./stats/
 ```
