@@ -1,4 +1,4 @@
-package statistics
+package stats
 
 // the following structs represent the JSON returned by Prometheus API from a query_range query
 

@@ -1,4 +1,4 @@
-package statistics
+package stats
 
 import (
 	"github.com/fnproject/fn/api/server"
@@ -7,6 +7,7 @@ import (
 
 // These functions are provided to support loading this extension via a custom ext.yaml file
 
+// StatisticsExtensionName returns the name of the Stats API extension
 func StatisticsExtensionName() string {
 	return "github.com/fnproject/ext-statsapi/stats"
 }

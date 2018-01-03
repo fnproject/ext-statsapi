@@ -1,4 +1,4 @@
-package statistics
+package stats
 
 // the following structs represent the JSON that we are building and returning to our caller
 // we have different structs for error and success

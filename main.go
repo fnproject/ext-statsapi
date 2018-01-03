@@ -6,6 +6,7 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"github.com/fnproject/ext-statsapi/stats"
 	"github.com/fnproject/fn/api/server"
 )
@@ -13,7 +14,7 @@ import (
 func main() {
 	ctx := context.Background()
 	funcServer := server.NewFromEnv(ctx)
-	funcServer.AddExtensionByName(statistics.StatisticsExtensionName())
+	funcServer.AddExtensionByName(stats.StatisticsExtensionName())
 
 	fmt.Println("Starting fn server with metrics API extensions")
 	funcServer.Start(ctx)

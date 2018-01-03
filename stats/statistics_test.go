@@ -1,4 +1,4 @@
-package statistics
+package stats
 
 import (
 	"encoding/json"
@@ -164,7 +164,7 @@ func verifySuccessfulJSON(t *testing.T, response interface{}, expectedCompleted 
 		lastValue := lastTimeAndValuePairAsMap["value"]
 		lastValueAsFloat64 := lastValue.(float64)
 		lastvalueAsInt := int(lastValueAsFloat64)
-		assertIntsEqual(t, "Completed count", expectedCompleted,lastvalueAsInt)
+		assertIntsEqual(t, "Completed count", expectedCompleted, lastvalueAsInt)
 	} else {
 		// Completed array is empty which implies a completed count of zero
 		assertIntsEqual(t, "Completed array is empty", expectedCompleted, 0)

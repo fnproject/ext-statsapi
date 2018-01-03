@@ -1,12 +1,13 @@
-package statistics
+package stats
 
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/fnproject/ext-statsapi/fncommon"
 	"github.com/fnproject/fn/api/models"
 	"github.com/fnproject/fn/fnext"
-	"net/http"
 )
 
 const (
@@ -22,10 +23,10 @@ type appStatisticsHandler struct{}
 type routeStatisticsHandler struct{}
 
 func AddEndpoints(s fnext.ExtServer) {
-	
+
 	promHost = fncommon.GetEnv(EnvPromHost, "localhost")
 	promPort = fncommon.GetEnv(EnvPromPort, "9090")
-	
+
 	s.AddEndpoint("GET", "/stats", &globalStatisticsHandler{})
 	s.AddEndpoint("GET", "/statistics", &globalStatisticsHandler{})
 
