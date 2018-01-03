@@ -1,4 +1,4 @@
-package statistics
+package stats
 
 import (
 	"encoding/json"
@@ -88,7 +88,7 @@ func executePrometheusRequest(url string) ([]metricsTimeValuePair, error) {
 			}
 		}
 		return metricDataArray[0:countOfNonNanValues], nil
-	} else {
-		return metricDataArray, nil
 	}
+	return metricDataArray, nil
+
 }
