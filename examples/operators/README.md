@@ -94,7 +94,7 @@ Alternatively you can start your custom Fn image and Prometheus separately.
 The following command is used to run your custom image. Replace `<ip-address>` with the IP address on which the Fn server is listening:
 
 ```sh
-docker run --rm --name fnserver -it \
+docker run --rm --name fnserver -d -it \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v $PWD/data:/app/data -p 8080:8080 \
   -e FN_EXT_STATS_PROM_HOST=<ip-address> imageuser/imagename
@@ -106,7 +106,7 @@ The default is `localhost`, which doesn't work if the Fn server is running in do
 
 On Linux you can use
 ```sh
-docker run --rm --name fnserver -it \
+docker run --rm --name fnserver -d -it \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v $PWD/data:/app/data -p 8080:8080 \
   -e FN_EXT_STATS_PROM_HOST=`route | grep default | awk '{print $2}'` imageuser/imagename
