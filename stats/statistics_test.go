@@ -46,7 +46,7 @@ func TestAllFuncsPerApp(t *testing.T) {
 	// Assumes all the following have been run
 	// test/run-cold-async.bash
 	appname := "hello-cold-async-a"
-	url := "http://localhost:8080/v1/apps/" + appname
+	url := "http://localhost:8080/v1/apps/" + appname + "/stats"
 	response := getURLAsJSON(t, url)
 	verifySuccessfulJSON(t, response, getCompletedForApp(t, appname))
 }
