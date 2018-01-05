@@ -1,11 +1,7 @@
 package stats
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"testing"
-	"time"
 )
 
 // Requires the following to be running
@@ -21,7 +17,7 @@ import (
 // Test a query which will return an error from the extension (rather than from the main router, such as app or route not found)
 func TestBadRoute(t *testing.T) {
 	url := "http://localhost:8080/v1/apps/hello-cold-sync-a/routes/hello-cold-sync-a1/stats?step=Wombat"
-	response := getJSON(t, url)
+	response := getURLAsJSON(t, url)
 	verifyFailedJSON(t, response, "Unable to parse step parameter: time: invalid duration Wombat")
 }
 
@@ -29,7 +25,7 @@ func TestBadRoute(t *testing.T) {
 func TestNeverCalled(t *testing.T) {
 	// verify stats for a function that has never been called (since server startup)
 	url := "http://localhost:8080/v1/apps/hello-cold-async-b/routes/hello-cold-async-b3/stats"
-	response := getJSON(t, url)
+	response := getURLAsJSON(t, url)
 	verifySuccessfulJSON(t, response, 0)
 }
 
@@ -41,85 +37,62 @@ func TestAllFuncs(t *testing.T) {
 	// test/run-hot-sync.bash
 	// test/run-hot-async.bash
 	url := "http://localhost:8080/v1/stats"
-	response := getJSON(t, url)
-	verifySuccessfulJSON(t, response, 120)
+	response := getURLAsJSON(t, url)
+	verifySuccessfulJSON(t, response, getCompleted(t))
 }
 
 func TestAllFuncsPerApp(t *testing.T) {
 	// verify stats across all three functions in the app hello-cold-async-a
 	// Assumes all the following have been run
-	// test/run-cold-sync.bash
 	// test/run-cold-async.bash
-	url := "http://localhost:8080/v1/apps/hello-cold-async-a/stats"
-	response := getJSON(t, url)
-	verifySuccessfulJSON(t, response, 60)
+	appname := "hello-cold-async-a"
+	url := "http://localhost:8080/v1/apps/" + appname
+	response := getURLAsJSON(t, url)
+	verifySuccessfulJSON(t, response, getCompletedForApp(t, appname))
 }
 
 // Test sync cold
 // Assumes test/run-cold-sync.bash has been run
 func TestSyncCold(t *testing.T) {
 	// verify stats for sync cold functions
-	url := "http://localhost:8080/v1/apps/hello-cold-sync-a/routes/hello-cold-sync-a1/stats"
-	response := getJSON(t, url)
-	verifySuccessfulJSON(t, response, 10)
+	appname := "hello-cold-sync-a"
+	routename := "hello-cold-sync-a1"
+	url := "http://localhost:8080/v1/apps/" + appname + "/routes/" + routename + "/stats"
+	response := getURLAsJSON(t, url)
+	verifySuccessfulJSON(t, response, getCompletedForAppAndRoute(t, appname, routename))
 }
 
 // Test async cold
 // Assumes test/run-cold-async.bash has been run
 func TestAsyncCold(t *testing.T) {
 	// verify stats for async cold functions
-	url := "http://localhost:8080/v1/apps/hello-cold-async-a/routes/hello-cold-async-a2/stats"
-	response := getJSON(t, url)
-	verifySuccessfulJSON(t, response, 20)
+	appname := "hello-cold-async-a"
+	routename := "hello-cold-async-a1"
+	url := "http://localhost:8080/v1/apps/" + appname + "/routes/" + routename + "/stats"
+	response := getURLAsJSON(t, url)
+	verifySuccessfulJSON(t, response, getCompletedForAppAndRoute(t, appname, routename))
 }
 
 // Test sync hot
 // Assumes test/run-hot-sync.bash has been run
 func TestSyncHot(t *testing.T) {
 	// verify stats for sync hot functions
-	url := "http://localhost:8080/v1/apps/hello-hot-sync-a/routes/hello-hot-sync-a1/stats"
-	response := getJSON(t, url)
-	verifySuccessfulJSON(t, response, 10)
+	appname := "hello-hot-sync-a"
+	routename := "hello-hot-sync-a1"
+	url := "http://localhost:8080/v1/apps/" + appname + "/routes/" + routename + "/stats"
+	response := getURLAsJSON(t, url)
+	verifySuccessfulJSON(t, response, getCompletedForAppAndRoute(t, appname, routename))
 }
 
 // Test async hot
 // Assumes test/run-hot-async.bash has been run
 func TestAsyncHot(t *testing.T) {
 	// verify stats for async hot functions
-	url := "http://localhost:8080/v1/apps/hello-hot-async-a/routes/hello-hot-async-a1/stats"
-	response := getJSON(t, url)
-	verifySuccessfulJSON(t, response, 20)
-}
-
-func getJSON(t *testing.T, url string) interface{} {
-	httpClient := http.Client{
-		Timeout: time.Second * 2, // Maximum of 2 secs
-	}
-
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-
-	req.Header.Set("User-Agent", "github.com/fnproject/ext-statsapi/main-test")
-
-	res, getErr := httpClient.Do(req)
-	if getErr != nil {
-		t.Fatal(getErr.Error())
-	}
-
-	body, readErr := ioutil.ReadAll(res.Body)
-	if readErr != nil {
-		t.Fatal(readErr.Error())
-	}
-
-	var m interface{}
-	unmarshallErr := json.Unmarshal(body, &m)
-	if unmarshallErr != nil {
-		t.Fatal(readErr.Error())
-	}
-	return m
-
+	appname := "hello-hot-async-a"
+	routename := "hello-hot-async-a1"
+	url := "http://localhost:8080/v1/apps/" + appname + "/routes/" + routename + "/stats"
+	response := getURLAsJSON(t, url)
+	verifySuccessfulJSON(t, response, getCompletedForAppAndRoute(t, appname, routename))
 }
 
 // Verify the JSON that is returned from a successful call

@@ -2,8 +2,6 @@ package stats
 
 import (
 	"errors"
-	"io/ioutil"
-	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
@@ -239,7 +237,7 @@ func call(t *testing.T, appname string, routename string, sync bool, forceTimeou
 			t.Fatal(errors.New("Sync call timed out"))
 		}
 	} else {
-		jsonResponse := getJSON(t, url)
+		jsonResponse := getURLAsJSON(t, url)
 		responseAsMap := jsonResponse.(map[string]interface{})
 		callid := responseAsMap["call_id"].(string)
 		// now wait for the async call to complete
@@ -249,7 +247,7 @@ func call(t *testing.T, appname string, routename string, sync bool, forceTimeou
 		timeout := 60 * time.Second
 		for !completed {
 			// wait for the call to complete
-			callStatusJSON := getJSON(t, statusQueryURL)
+			callStatusJSON := getURLAsJSON(t, statusQueryURL)
 			callStatusAsMap := callStatusJSON.(map[string]interface{})
 			callJSON := callStatusAsMap["call"]
 			if callJSON != nil {
@@ -277,7 +275,7 @@ func call(t *testing.T, appname string, routename string, sync bool, forceTimeou
 			}
 		}
 		// async call has completed, now get the output
-		jsonLogResponse := getJSON(t, statusQueryURL+"/log")
+		jsonLogResponse := getURLAsJSON(t, statusQueryURL+"/log")
 		logResponseAsMap := jsonLogResponse.(map[string]interface{})
 		logAsJSON := logResponseAsMap["log"]
 		logAsMap := logAsJSON.(map[string]interface{})
@@ -296,7 +294,7 @@ func getMetrics(t *testing.T, appname string, routename string) map[string]int {
 	result := make(map[string]int)
 
 	// get all Prometheus metrics
-	scrapedMetrics := getURL(t, "http://localhost:8080/metrics")
+	scrapedMetrics := string(getURL(t, "http://localhost:8080/metrics"))
 
 	requiredMetrics := []string{"fn_api_calls", "fn_api_queued", "fn_api_completed", "fn_api_failed", "fn_api_running"}
 	for _, thisMetricName := range requiredMetrics {
@@ -317,29 +315,4 @@ func getMetrics(t *testing.T, appname string, routename string) map[string]int {
 	}
 	return result
 
-}
-
-func getURL(t *testing.T, url string) string {
-	httpClient := http.Client{
-		Timeout: time.Second * 60, // Maximum of 60 secs
-	}
-
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-
-	req.Header.Set("User-Agent", "github.com/fnproject/ext-statsapi/metrics_test")
-
-	res, err := httpClient.Do(req)
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-
-	return string(body[:])
 }
