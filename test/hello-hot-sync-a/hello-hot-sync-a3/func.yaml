@@ -1,4 +1,4 @@
-name: imageuser/hello-hot-sync-a1
+name: imageuser/hello-hot-sync-a3
 version: 0.0.31
 runtime: docker
 format: http

@@ -1,4 +1,4 @@
-name: imageuser/hello-hot-async-a1
+name: imageuser/hello-hot-async-a3
 version: 0.0.20
 runtime: docker
 type: async
