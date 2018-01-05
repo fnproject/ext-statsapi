@@ -232,7 +232,7 @@ func call(t *testing.T, appname string, routename string, sync bool, forceTimeou
 
 	var response string
 	if sync {
-		response = getURL(t, url)
+		response = getURLAsString(t, url)
 		if response == `{"error":{"message":"Timed out"}}"` {
 			t.Fatal(errors.New("Sync call timed out"))
 		}
@@ -294,7 +294,7 @@ func getMetrics(t *testing.T, appname string, routename string) map[string]int {
 	result := make(map[string]int)
 
 	// get all Prometheus metrics
-	scrapedMetrics := string(getURL(t, "http://localhost:8080/metrics"))
+	scrapedMetrics := getURLAsString(t, "http://localhost:8080/metrics")
 
 	requiredMetrics := []string{"fn_api_calls", "fn_api_queued", "fn_api_completed", "fn_api_failed", "fn_api_running"}
 	for _, thisMetricName := range requiredMetrics {
