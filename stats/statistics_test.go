@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"testing"
 	"time"
 )
@@ -22,8 +21,7 @@ import (
 // Test a query which will return an error from the extension (rather than from the main router, such as app or route not found)
 func TestBadRoute(t *testing.T) {
 	url := "http://localhost:8080/v1/apps/hello-cold-sync-a/routes/hello-cold-sync-a1/stats?step=Wombat"
-	response, err := getJSON(t, url)
-	assertNoError(t, "getJSON", err)
+	response := getJSON(t, url)
 	verifyFailedJSON(t, response, "Unable to parse step parameter: time: invalid duration Wombat")
 }
 
@@ -31,8 +29,7 @@ func TestBadRoute(t *testing.T) {
 func TestNeverCalled(t *testing.T) {
 	// verify stats for a function that has never been called (since server startup)
 	url := "http://localhost:8080/v1/apps/hello-cold-async-b/routes/hello-cold-async-b3/stats"
-	response, err := getJSON(t, url)
-	assertNoError(t, "getJSON", err)
+	response := getJSON(t, url)
 	verifySuccessfulJSON(t, response, 0)
 }
 
@@ -44,8 +41,7 @@ func TestAllFuncs(t *testing.T) {
 	// test/run-hot-sync.bash
 	// test/run-hot-async.bash
 	url := "http://localhost:8080/v1/stats"
-	response, err := getJSON(t, url)
-	assertNoError(t, "getJSON", err)
+	response := getJSON(t, url)
 	verifySuccessfulJSON(t, response, 120)
 }
 
@@ -55,8 +51,7 @@ func TestAllFuncsPerApp(t *testing.T) {
 	// test/run-cold-sync.bash
 	// test/run-cold-async.bash
 	url := "http://localhost:8080/v1/apps/hello-cold-async-a/stats"
-	response, err := getJSON(t, url)
-	assertNoError(t, "getJSON", err)
+	response := getJSON(t, url)
 	verifySuccessfulJSON(t, response, 60)
 }
 
@@ -65,8 +60,7 @@ func TestAllFuncsPerApp(t *testing.T) {
 func TestSyncCold(t *testing.T) {
 	// verify stats for sync cold functions
 	url := "http://localhost:8080/v1/apps/hello-cold-sync-a/routes/hello-cold-sync-a1/stats"
-	response, err := getJSON(t, url)
-	assertNoError(t, "getJSON", err)
+	response := getJSON(t, url)
 	verifySuccessfulJSON(t, response, 10)
 }
 
@@ -75,8 +69,7 @@ func TestSyncCold(t *testing.T) {
 func TestAsyncCold(t *testing.T) {
 	// verify stats for async cold functions
 	url := "http://localhost:8080/v1/apps/hello-cold-async-a/routes/hello-cold-async-a2/stats"
-	response, err := getJSON(t, url)
-	assertNoError(t, "getJSON", err)
+	response := getJSON(t, url)
 	verifySuccessfulJSON(t, response, 20)
 }
 
@@ -85,8 +78,7 @@ func TestAsyncCold(t *testing.T) {
 func TestSyncHot(t *testing.T) {
 	// verify stats for sync hot functions
 	url := "http://localhost:8080/v1/apps/hello-hot-sync-a/routes/hello-hot-sync-a1/stats"
-	response, err := getJSON(t, url)
-	assertNoError(t, "getJSON", err)
+	response := getJSON(t, url)
 	verifySuccessfulJSON(t, response, 10)
 }
 
@@ -95,12 +87,11 @@ func TestSyncHot(t *testing.T) {
 func TestAsyncHot(t *testing.T) {
 	// verify stats for async hot functions
 	url := "http://localhost:8080/v1/apps/hello-hot-async-a/routes/hello-hot-async-a1/stats"
-	response, err := getJSON(t, url)
-	assertNoError(t, "getJSON", err)
+	response := getJSON(t, url)
 	verifySuccessfulJSON(t, response, 20)
 }
 
-func getJSON(t *testing.T, url string) (interface{}, error) {
+func getJSON(t *testing.T, url string) interface{} {
 	httpClient := http.Client{
 		Timeout: time.Second * 2, // Maximum of 2 secs
 	}
@@ -114,17 +105,20 @@ func getJSON(t *testing.T, url string) (interface{}, error) {
 
 	res, getErr := httpClient.Do(req)
 	if getErr != nil {
-		t.Fatal(err.Error())
+		t.Fatal(getErr.Error())
 	}
 
 	body, readErr := ioutil.ReadAll(res.Body)
 	if readErr != nil {
-		t.Fatal(err.Error())
+		t.Fatal(readErr.Error())
 	}
 
 	var m interface{}
 	unmarshallErr := json.Unmarshal(body, &m)
-	return m, unmarshallErr
+	if unmarshallErr != nil {
+		t.Fatal(readErr.Error())
+	}
+	return m
 
 }
 
@@ -217,30 +211,6 @@ func verifyFailedJSON(t *testing.T, response interface{}, expectedError string) 
 	errorAsString := responseAsMap["error"].(string)
 	if expectedError != "" {
 		assertStringsEqual(t, "error field", expectedError, errorAsString)
-	}
-}
-
-func assertNoError(t *testing.T, assertionText string, err error) {
-	if err != nil {
-		t.Fatal(assertionText + " FAILED due to error: " + err.Error())
-	}
-}
-
-func assertIntsEqual(t *testing.T, assertionText string, expected int, actual int) {
-	if actual != expected {
-		t.Fatal(assertionText + " FAILED: expected " + strconv.Itoa(expected) + ", actual " + strconv.Itoa(actual))
-	}
-}
-
-func assertStringsEqual(t *testing.T, assertionText string, expected string, actual string) {
-	if actual != expected {
-		t.Fatal(assertionText + " FAILED: expected " + expected + ", actual " + actual)
-	}
-}
-
-func assertNotNil(t *testing.T, assertionText string, actual interface{}) {
-	if actual == nil {
-		t.Fatal(assertionText + " FAILED: expected a non-nil value")
 	}
 }
 
