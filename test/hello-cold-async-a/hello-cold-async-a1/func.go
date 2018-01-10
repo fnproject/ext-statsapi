@@ -43,6 +43,13 @@ func main() {
 		}
 	}
 
+	// The query parameter "sleep"  can be used to specify a sleep time in ms
+	sleepParam := m.Get("sleep")
+	sleeptime, err := strconv.Atoi(sleepParam)
+	if err == nil {
+		time.Sleep(time.Duration(sleeptime) * time.Millisecond)
+	}
+
 	fmt.Println("Hello from hello-cold-async-a/hello-cold-async-a1")
 	fmt.Println("COMPLETEDOK") // Used by tests to check the function completed OK
 }
