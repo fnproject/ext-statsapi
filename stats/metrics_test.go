@@ -93,9 +93,10 @@ func TestHotSyncWithTimeout(t *testing.T) {
 }
 
 func TestHotSyncWithPanic(t *testing.T) {
-	// this test seems to timeout (rather than panic) if the Fn server is busy processing previous function calls,
-	// so sleep for a few moments
-	time.Sleep(time.Duration(20) * time.Second)
+	// this test seems to timeout (rather than panic) unless we sleep for a while first
+	// perhaps need to allow any existing hot function to timeout and be terminated before running this test? (Just guessing)
+	// whatever it is, we just want to force the function to fail rather than timeout
+	time.Sleep(time.Duration(40) * time.Second)
 
 	appname := "hello-hot-sync-a"
 	routename := "hello-hot-sync-a1"
@@ -121,9 +122,10 @@ func TestHotAsyncWithTimeout(t *testing.T) {
 }
 
 func TestHotAsyncWithPanic(t *testing.T) {
-	// this test seems to timeout (rather than panic) if the Fn server is busy processing previous function calls,
-	// so sleep for a few moments
-	time.Sleep(time.Duration(20) * time.Second)
+	// this test seems to timeout (rather than panic) unless we sleep for a while first
+	// perhaps need to allow any existing hot function to timeout and be terminated before running this test? (Just guessing)
+	// whatever it is, we just want to force the function to fail rather than timeout
+	time.Sleep(time.Duration(40) * time.Second)
 
 	appname := "hello-hot-async-a"
 	routename := "hello-hot-async-a1"
