@@ -1,5 +1,0 @@
-name: imageuser/hello-hot-sync-a2
-version: 0.0.31
-runtime: docker
-format: http
-timeout: 5

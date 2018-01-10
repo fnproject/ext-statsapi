@@ -86,7 +86,7 @@ func TestHotSyncSuccessful(t *testing.T) {
 func TestHotSyncWithTimeout(t *testing.T) {
 
 	appname := "hello-hot-sync-a"
-	routename := "hello-hot-sync-a2" // This function always times out
+	routename := "hello-hot-sync-a1"
 	sync := true
 	hot := true
 	doTestWithTimeout(t, appname, routename, sync, hot)
@@ -95,7 +95,7 @@ func TestHotSyncWithTimeout(t *testing.T) {
 func TestHotSyncWithPanic(t *testing.T) {
 
 	appname := "hello-hot-sync-a"
-	routename := "hello-hot-sync-a3" // This function always panics
+	routename := "hello-hot-sync-a1"
 	sync := true
 	doTestWithPanic(t, appname, routename, sync)
 }
@@ -111,7 +111,7 @@ func TestHotAsyncSuccessful(t *testing.T) {
 func TestHotAsyncWithTimeout(t *testing.T) {
 
 	appname := "hello-hot-async-a"
-	routename := "hello-hot-async-a2" // This function always times out
+	routename := "hello-hot-async-a1"
 	sync := false
 	hot := true
 	doTestWithTimeout(t, appname, routename, sync, hot)
@@ -120,7 +120,7 @@ func TestHotAsyncWithTimeout(t *testing.T) {
 func TestHotAsyncWithPanic(t *testing.T) {
 
 	appname := "hello-hot-async-a"
-	routename := "hello-hot-async-a3" // This function always panics
+	routename := "hello-hot-async-a1"
 	sync := false
 	doTestWithPanic(t, appname, routename, sync)
 }
