@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"net/url"
-	"os"
 	"strconv"
 	"time"
 )
@@ -18,16 +17,11 @@ func main() {
 
 func myHandler(ctx context.Context, in io.Reader, out io.Writer) {
 
-	// Looks as if "FN_REQUEST_URL" is not set in hot functions, so forcepanic and forcetimeout are ignored
-
 	// Get query parameters forcepanic and forcetimeout
 	// if both forcepanic and forcetimeout are set then function will panic
 
-	s := os.Getenv("FN_REQUEST_URL")
-	out.Write([]byte("<" + s + ">"))
-
-	a := os.Getenv("FN_APP_NAME")
-	out.Write([]byte("<" + a + ">"))
+	fnctx := fdk.Context(ctx)
+	s := fnctx.Header.Get("Fn_request_url")
 
 	u, err := url.Parse(s)
 	if err != nil {

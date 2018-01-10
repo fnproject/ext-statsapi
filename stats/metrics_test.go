@@ -86,16 +86,20 @@ func TestHotSyncSuccessful(t *testing.T) {
 func TestHotSyncWithTimeout(t *testing.T) {
 
 	appname := "hello-hot-sync-a"
-	routename := "hello-hot-sync-a2" // This function always times out
+	routename := "hello-hot-sync-a1"
 	sync := true
 	hot := true
 	doTestWithTimeout(t, appname, routename, sync, hot)
 }
 
 func TestHotSyncWithPanic(t *testing.T) {
+	// this test seems to timeout (rather than panic) unless we sleep for a while first
+	// perhaps need to allow any existing hot function to timeout and be terminated before running this test? (Just guessing)
+	// whatever it is, we just want to force the function to fail rather than timeout
+	time.Sleep(time.Duration(40) * time.Second)
 
 	appname := "hello-hot-sync-a"
-	routename := "hello-hot-sync-a3" // This function always panics
+	routename := "hello-hot-sync-a1"
 	sync := true
 	doTestWithPanic(t, appname, routename, sync)
 }
@@ -111,16 +115,20 @@ func TestHotAsyncSuccessful(t *testing.T) {
 func TestHotAsyncWithTimeout(t *testing.T) {
 
 	appname := "hello-hot-async-a"
-	routename := "hello-hot-async-a2" // This function always times out
+	routename := "hello-hot-async-a1"
 	sync := false
 	hot := true
 	doTestWithTimeout(t, appname, routename, sync, hot)
 }
 
 func TestHotAsyncWithPanic(t *testing.T) {
+	// this test seems to timeout (rather than panic) unless we sleep for a while first
+	// perhaps need to allow any existing hot function to timeout and be terminated before running this test? (Just guessing)
+	// whatever it is, we just want to force the function to fail rather than timeout
+	time.Sleep(time.Duration(40) * time.Second)
 
 	appname := "hello-hot-async-a"
-	routename := "hello-hot-async-a3" // This function always panics
+	routename := "hello-hot-async-a1"
 	sync := false
 	doTestWithPanic(t, appname, routename, sync)
 }
@@ -206,7 +214,7 @@ func doTestWithPanic(t *testing.T, appname string, routename string, sync bool) 
 		// we find by experiment that the function panic output is lost, but the system returns some JSON containing the message "container exit code 2"
 		// This is just how things happen to be
 		if !strings.Contains(output, "container exit code 2") {
-			t.Fatal("Function call did not return system-generated timeout message as expected: " + output)
+			t.Fatal("Function call did not return system-generated panic message as expected: " + output)
 		}
 		if strings.Contains(output, "FORCEPANIC") {
 			t.Fatal("Function call unexpectedly returned function output: " + output)
@@ -215,7 +223,7 @@ func doTestWithPanic(t *testing.T, appname string, routename string, sync bool) 
 		// we find by experiment that the function panic output is available, and the system does not return the message "container exit code 2"
 		// This is just how things happen to be
 		if strings.Contains(output, "container exit code 2") {
-			t.Fatal("Function call unexpectedly returned system-generated timeout message: " + output)
+			t.Fatal("Function call unexpectedly returned system-generated panic message: " + output)
 		}
 		if !strings.Contains(output, "panic: FORCEPANIC") {
 			t.Fatal("Function call does not return function output: " + output)
