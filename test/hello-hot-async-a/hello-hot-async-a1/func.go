@@ -50,6 +50,13 @@ func myHandler(ctx context.Context, in io.Reader, out io.Writer) {
 		}
 	}
 
+	// The query parameter "sleep"  can be used to specify a sleep time in ms
+	sleepParam := m.Get("sleep")
+	sleeptime, err := strconv.Atoi(sleepParam)
+	if err == nil {
+		time.Sleep(time.Duration(sleeptime) * time.Millisecond)
+	}
+
 	out.Write([]byte("Hello from hello-hot-async-a/hot-hot-async-a1"))
 	out.Write([]byte("COMPLETEDOK")) // Used by tests to check the function completed OK
 
