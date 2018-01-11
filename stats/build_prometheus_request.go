@@ -6,22 +6,22 @@ import (
 
 // Prometheus metrics to use for global-scope queries, keyed by metric type
 var promMetricNamesForGlobalQueries = map[int]string{
-	completed: "fn_api_completed",
-	failed:    "fn_api_failed",
+	completed: "fn_completed",
+	failed:    "fn_failed",
 	durations: "fn_span_agent_submit_global_duration_seconds",
 }
 
 // Prometheus metrics to use for app-scoped queries, keyed by metric type
 var promMetricNamesForAppScopedQueries = map[int]string{
-	completed: "fn_api_completed",
-	failed:    "fn_api_failed",
+	completed: "fn_completed",
+	failed:    "fn_failed",
 	durations: "fn_span_agent_submit_app_duration_seconds",
 }
 
 // Prometheus metrics to use for route-scoped queries, keyed by metric type
 var promMetricNamesForRouteScopedQueries = map[int]string{
-	completed: "fn_api_completed",
-	failed:    "fn_api_failed",
+	completed: "fn_completed",
+	failed:    "fn_failed",
 	durations: "fn_span_agent_submit_duration_seconds",
 }
 
@@ -51,8 +51,8 @@ func buildPrometheusRequest(queryBuilder func(string, string, string, int, int, 
 func queryBuilderForCountersAndGauges(promHost string, promPort string, promMetricName string, queryScope int, metricType int, appName string, routeName string, startTimeString string, endTimeString string, stepString string) string {
 
 	var query string
-	appLabel := "app"
-	routeLabel := "path"
+	appLabel := "fn_appname"
+	routeLabel := "fn_path"
 	switch queryScope {
 	case query_scope_global:
 		query = "sum(" + promMetricName + ")"

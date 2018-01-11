@@ -10,11 +10,19 @@ import (
 )
 
 // name of Prometheus metrics
-var callsMet = "fn_api_calls"
-var queuedMet = "fn_api_queued"
-var runningMet = "fn_api_running"
-var failedMet = "fn_api_failed"
-var completedMet = "fn_api_completed"
+const (
+	callsMet     = "fn_calls"
+	queuedMet    = "fn_queued"
+	runningMet   = "fn_running"
+	failedMet    = "fn_failed"
+	completedMet = "fn_completed"
+)
+
+// name of Prometheus labels
+const (
+	appnameLabel = "fn_appname"
+	pathLabel    = "fn_path"
+)
 
 // Test Prometheus metrics directly
 
@@ -314,11 +322,13 @@ func getMetrics(t *testing.T, appname string, routename string) map[string]int {
 	// get all Prometheus metrics
 	scrapedMetrics := getURLAsString(t, "http://localhost:8080/metrics")
 
-	requiredMetrics := []string{"fn_api_calls", "fn_api_queued", "fn_api_completed", "fn_api_failed", "fn_api_running"}
+	requiredMetrics := []string{callsMet, queuedMet, completedMet, failedMet, runningMet}
 	for _, thisMetricName := range requiredMetrics {
 		var thisMetricValue int
 		var err error
-		regularExpression := thisMetricName + `{app="` + appname + `",path="/` + routename + `"} (\d+)`
+		//regularExpression := thisMetricName + `{app="` + appname + `",path="/` + routename + `"} (\d+)`
+		regularExpression := thisMetricName + `{` + appnameLabel + `="` + appname + `",` + pathLabel + `="/` + routename + `"} (\d+)`
+
 		re := regexp.MustCompile(regularExpression)
 		matches := re.FindStringSubmatch(scrapedMetrics)
 		if len(matches) == 0 {
