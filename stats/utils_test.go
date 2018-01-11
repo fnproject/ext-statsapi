@@ -36,33 +36,33 @@ func assertNotNil(t *testing.T, assertionText string, actual interface{}) {
 	}
 }
 
-// Return the sum of fn_api_completed for all applications and routes
+// Return the sum of fn_completed for all applications and routes
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getCompleted(t *testing.T) int {
 	completed := 0
 	for _, appname := range getApplications(t) {
 		for _, routename := range getRoutes(t, appname) {
 			metrics := getMetrics(t, appname, routename)
-			completed += metrics["fn_api_completed"]
+			completed += metrics[completedMet]
 		}
 	}
 	return completed
 }
 
-// Return the sum of fn_api_completed for all routes in the specified application
+// Return the sum of fn_completed for all routes in the specified application
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getCompletedForApp(t *testing.T, appname string) int {
 	completed := 0
 	for _, routename := range getRoutes(t, appname) {
-		completed += getMetrics(t, appname, routename)["fn_api_completed"]
+		completed += getMetrics(t, appname, routename)[completedMet]
 	}
 	return completed
 }
 
-// Return the value of fn_api_completed the specified application and route
+// Return the value of fn_completed the specified application and route
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getCompletedForAppAndRoute(t *testing.T, appname string, routename string) int {
-	return getMetrics(t, appname, routename)["fn_api_completed"]
+	return getMetrics(t, appname, routename)[completedMet]
 }
 
 // Return the names of all applications
