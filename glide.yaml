@@ -1,7 +1,7 @@
 package: github.com/fnproject/ext-statsapi
 import:
 - package: github.com/fnproject/fn
-  version: master
+  version: add_prom_metric_timedout
   subpackages:
   - api/models
   - api/server
