@@ -16,6 +16,8 @@ const (
 	runningMet   = "fn_running"
 	failedMet    = "fn_failed"
 	completedMet = "fn_completed"
+	timedoutMet  = "fn_timedout"
+	errorsMet    = "fn_errors"
 )
 
 // name of Prometheus labels
@@ -162,7 +164,8 @@ func doTestSuccessful(t *testing.T, appname string, routename string, sync bool)
 	assertIntsEqual(t, message+" queued should be unchanged", metrics0[queuedMet], metrics1[queuedMet])
 	assertIntsEqual(t, message+" failed should be unchanged", metrics0[failedMet], metrics1[failedMet])
 	assertIntsEqual(t, message+" running should be unchanged", metrics0[runningMet], metrics1[runningMet])
-
+	assertIntsEqual(t, message+" timedout should be unchanged", metrics0[timedoutMet], metrics1[timedoutMet])
+	assertIntsEqual(t, message+" errors should be unchanged", metrics0[errorsMet], metrics1[errorsMet])
 }
 
 func doTestWithTimeout(t *testing.T, appname string, routename string, sync bool, hot bool) {
@@ -206,7 +209,8 @@ func doTestWithTimeout(t *testing.T, appname string, routename string, sync bool
 	assertIntsEqual(t, message+" queued should be unchanged", metrics0[queuedMet], metrics1[queuedMet])
 	assertIntsEqual(t, message+" failed should have increased by 1", metrics0[failedMet]+1, metrics1[failedMet])
 	assertIntsEqual(t, message+" running should be unchanged", metrics0[runningMet], metrics1[runningMet])
-
+	assertIntsEqual(t, message+" timedout should have increased by 1", metrics0[timedoutMet]+1, metrics1[timedoutMet])
+	assertIntsEqual(t, message+" errors should be unchanged", metrics0[errorsMet], metrics1[errorsMet])
 }
 
 func doTestWithPanic(t *testing.T, appname string, routename string, sync bool) {
@@ -246,7 +250,8 @@ func doTestWithPanic(t *testing.T, appname string, routename string, sync bool) 
 	assertIntsEqual(t, message+" queued should be unchanged", metrics0[queuedMet], metrics1[queuedMet])
 	assertIntsEqual(t, message+" failed should have increased by 1", metrics0[failedMet]+1, metrics1[failedMet])
 	assertIntsEqual(t, message+" running should be unchanged", metrics0[runningMet], metrics1[runningMet])
-
+	assertIntsEqual(t, message+" timedout should be unchanged", metrics0[timedoutMet], metrics1[timedoutMet])
+	assertIntsEqual(t, message+" errors should have increased by 1", metrics0[errorsMet]+1, metrics1[errorsMet])
 }
 
 func call(t *testing.T, appname string, routename string, sync bool, forceTimeout bool, forcePanic bool) string {
@@ -322,7 +327,7 @@ func getMetrics(t *testing.T, appname string, routename string) map[string]int {
 	// get all Prometheus metrics
 	scrapedMetrics := getURLAsString(t, "http://localhost:8080/metrics")
 
-	requiredMetrics := []string{callsMet, queuedMet, completedMet, failedMet, runningMet}
+	requiredMetrics := []string{callsMet, queuedMet, completedMet, failedMet, runningMet, timedoutMet, errorsMet}
 	for _, thisMetricName := range requiredMetrics {
 		var thisMetricValue int
 		var err error
