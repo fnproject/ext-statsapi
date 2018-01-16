@@ -5,31 +5,47 @@ import (
 )
 
 // Prometheus metrics to use for global-scope queries, keyed by metric type
+// see comment in statistics.go for information on adding a new metric
 var promMetricNamesForGlobalQueries = map[int]string{
-	completed: "fn_completed",
-	failed:    "fn_failed",
-	durations: "fn_span_agent_submit_global_duration_seconds",
+	completedConst: "fn_completed",
+	failedConst:    "fn_failed",
+	callsConst:     "fn_calls",
+	errorsConst:    "fn_errors",
+	timedoutConst:  "fn_timedout",
+	durationsConst: "fn_span_agent_submit_global_duration_seconds",
 }
 
 // Prometheus metrics to use for app-scoped queries, keyed by metric type
+// see comment in statistics.go for information on adding a new metric
 var promMetricNamesForAppScopedQueries = map[int]string{
-	completed: "fn_completed",
-	failed:    "fn_failed",
-	durations: "fn_span_agent_submit_app_duration_seconds",
+	completedConst: "fn_completed",
+	failedConst:    "fn_failed",
+	callsConst:     "fn_calls",
+	errorsConst:    "fn_errors",
+	timedoutConst:  "fn_timedout",
+	durationsConst: "fn_span_agent_submit_app_duration_seconds",
 }
 
 // Prometheus metrics to use for route-scoped queries, keyed by metric type
+// see comment in statistics.go for information on adding a new metric
 var promMetricNamesForRouteScopedQueries = map[int]string{
-	completed: "fn_completed",
-	failed:    "fn_failed",
-	durations: "fn_span_agent_submit_duration_seconds",
+	completedConst: "fn_completed",
+	failedConst:    "fn_failed",
+	callsConst:     "fn_calls",
+	errorsConst:    "fn_errors",
+	timedoutConst:  "fn_timedout",
+	durationsConst: "fn_span_agent_submit_duration_seconds",
 }
 
 // Functions that know how to build the required Prometheus query, keyed by metric type
+// see comment in statistics.go for information on adding a new metric
 var queryBuilders = map[int]func(string, string, string, int, int, string, string, string, string, string) string{
-	completed: queryBuilderForCountersAndGauges,
-	failed:    queryBuilderForCountersAndGauges,
-	durations: queryBuilderForForDurations,
+	completedConst: queryBuilderForCountersAndGauges,
+	failedConst:    queryBuilderForCountersAndGauges,
+	callsConst:     queryBuilderForCountersAndGauges,
+	errorsConst:    queryBuilderForCountersAndGauges,
+	timedoutConst:  queryBuilderForCountersAndGauges,
+	durationsConst: queryBuilderForForDurations,
 }
 
 var promMetricNameMapsForQueries = make(map[int]map[int]string)
