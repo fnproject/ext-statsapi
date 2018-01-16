@@ -69,14 +69,6 @@ jobs:
           command: |
             sleep 5
             bash test/create.bash
-            bash test/run-cold-sync.bash
-            bash test/run-cold-async.bash
-            bash test/run-hot-sync.bash
-            bash test/run-hot-async.bash
-            sleep 120 # TODO: make the test retry rather than have an arbitrary sleep
-            echo
-            curl http://localhost:8080/v1/stats
-            echo
             go test ./stats/
       - run:
           name: Terminate Prometheus

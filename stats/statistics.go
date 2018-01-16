@@ -64,18 +64,35 @@ const (
 	query_scope_route  = iota
 )
 
-// metric types
+// these constants represent the various types of statistic returned by this API
+// If you add a new type of statistic you must also
+// (0) add a new entry to the map jsonKeys below
+// (1) add new entries to the three maps (all in build_prometheus_request.go)
+//     promMetricNamesForGlobalQueries,
+//     promMetricNamesForAppScopedQueries and
+//     promMetricNamesForRouteScopedQueries
+//     with the Prometheus metric corresponding to the new metric type
+// (2) update the map queryBuilders (in build_prometheus_request.go)
+//     with the name of the appropriate query builder for this metric type
 const (
-	completed = iota
-	failed    = iota
-	durations = iota
+	completedConst = iota
+	failedConst    = iota
+	durationsConst = iota
+	callsConst     = iota
+	errorsConst    = iota
+	timedoutConst  = iota
 )
 
-// keys in the returned JSON data array, keyed by metric type
+// in this map, the key is the constant for the type of statistic and
+// the corresponding value is the name of the key that will hold this type of statistic in the returned JSON data structure
+// see comment above for information on adding a new type of statistic
 var jsonKeys = map[int]string{
-	completed: "completed",
-	failed:    "failed",
-	durations: "durations",
+	completedConst: "completed",
+	failedConst:    "failed",
+	durationsConst: "durations",
+	callsConst:     "calls",
+	errorsConst:    "errors",
+	timedoutConst:  "timedout",
 }
 
 // Process the request and return the requested data as JSON

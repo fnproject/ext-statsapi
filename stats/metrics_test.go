@@ -2,7 +2,6 @@ package stats
 
 import (
 	"errors"
-	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -145,7 +144,7 @@ func TestHotAsyncWithPanic(t *testing.T) {
 
 func doTestSuccessful(t *testing.T, appname string, routename string, sync bool) {
 
-	metrics0 := getMetrics(t, appname, routename)
+	metrics0 := getAllMetricsForAppAndRoute(t, appname, routename)
 
 	// make a function call which will NOT timeout
 	sleeptime := 0
@@ -156,11 +155,11 @@ func doTestSuccessful(t *testing.T, appname string, routename string, sync bool)
 		t.Fatal("Function did not complete: " + output)
 	}
 
-	metrics1 := getMetrics(t, appname, routename)
+	metrics1 := getAllMetricsForAppAndRoute(t, appname, routename)
 
 	message := "after calling " + appname + "/" + routename + " with sleeptime " + strconv.Itoa(sleeptime)
 	assertIntsEqual(t, message+" calls should have increased by 1", metrics0[callsMet]+1, metrics1[callsMet])
-	assertIntsEqual(t, message+" completed should have incrreturnseased by 1", metrics0[completedMet]+1, metrics1[completedMet])
+	assertIntsEqual(t, message+" completed should have increased by 1", metrics0[completedMet]+1, metrics1[completedMet])
 	assertIntsEqual(t, message+" queued should be unchanged", metrics0[queuedMet], metrics1[queuedMet])
 	assertIntsEqual(t, message+" failed should be unchanged", metrics0[failedMet], metrics1[failedMet])
 	assertIntsEqual(t, message+" running should be unchanged", metrics0[runningMet], metrics1[runningMet])
@@ -170,7 +169,7 @@ func doTestSuccessful(t *testing.T, appname string, routename string, sync bool)
 
 func doTestWithTimeout(t *testing.T, appname string, routename string, sync bool, hot bool) {
 
-	metrics0 := getMetrics(t, appname, routename)
+	metrics0 := getAllMetricsForAppAndRoute(t, appname, routename)
 
 	// make a function call which WILL timeout"
 	sleeptime := 60000 // Function timeout is 5000 ms
@@ -190,7 +189,7 @@ func doTestWithTimeout(t *testing.T, appname string, routename string, sync bool
 		}
 	} else {
 		if hot {
-			// now sure what is supposed to happen, skip testing
+			// not sure what is supposed to happen, skip testing
 		} else {
 			if strings.Contains(output, "Timed out") {
 				t.Fatal("Function call unexpectedly returned system-generated timeout message: " + output)
@@ -201,7 +200,7 @@ func doTestWithTimeout(t *testing.T, appname string, routename string, sync bool
 		}
 	}
 
-	metrics1 := getMetrics(t, appname, routename)
+	metrics1 := getAllMetricsForAppAndRoute(t, appname, routename)
 
 	message := "after calling " + appname + "/" + routename + " with sleeptime " + strconv.Itoa(sleeptime)
 	assertIntsEqual(t, message+" calls should have increased by 1", metrics0[callsMet]+1, metrics1[callsMet])
@@ -215,7 +214,7 @@ func doTestWithTimeout(t *testing.T, appname string, routename string, sync bool
 
 func doTestWithPanic(t *testing.T, appname string, routename string, sync bool) {
 
-	metrics0 := getMetrics(t, appname, routename)
+	metrics0 := getAllMetricsForAppAndRoute(t, appname, routename)
 
 	// make a function call which will panic"
 	sleeptime := 0
@@ -242,7 +241,7 @@ func doTestWithPanic(t *testing.T, appname string, routename string, sync bool) 
 		}
 	}
 
-	metrics1 := getMetrics(t, appname, routename)
+	metrics1 := getAllMetricsForAppAndRoute(t, appname, routename)
 
 	message := "after calling " + appname + "/" + routename + " with sleeptime " + strconv.Itoa(sleeptime)
 	assertIntsEqual(t, message+" calls should have increased by 1", metrics0[callsMet]+1, metrics1[callsMet])
@@ -318,34 +317,4 @@ func call(t *testing.T, appname string, routename string, sync bool, forceTimeou
 	// now check the status of the call
 
 	return response
-}
-
-func getMetrics(t *testing.T, appname string, routename string) map[string]int {
-
-	result := make(map[string]int)
-
-	// get all Prometheus metrics
-	scrapedMetrics := getURLAsString(t, "http://localhost:8080/metrics")
-
-	requiredMetrics := []string{callsMet, queuedMet, completedMet, failedMet, runningMet, timedoutMet, errorsMet}
-	for _, thisMetricName := range requiredMetrics {
-		var thisMetricValue int
-		var err error
-		//regularExpression := thisMetricName + `{app="` + appname + `",path="/` + routename + `"} (\d+)`
-		regularExpression := thisMetricName + `{` + appnameLabel + `="` + appname + `",` + pathLabel + `="/` + routename + `"} (\d+)`
-
-		re := regexp.MustCompile(regularExpression)
-		matches := re.FindStringSubmatch(scrapedMetrics)
-		if len(matches) == 0 {
-			thisMetricValue = 0
-		} else {
-			thisMetricValue, err = strconv.Atoi(matches[1])
-			if err != nil {
-				t.Fatal(err)
-			}
-		}
-		result[thisMetricName] = thisMetricValue
-	}
-	return result
-
 }

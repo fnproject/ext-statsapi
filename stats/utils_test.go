@@ -5,10 +5,13 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"regexp"
 	"strconv"
 	"testing"
 	"time"
 )
+
+var requiredMetrics = []string{callsMet, queuedMet, completedMet, failedMet, runningMet, timedoutMet, errorsMet}
 
 // This file contains test utilities only (no tests)
 
@@ -18,10 +21,24 @@ func assertNoError(t *testing.T, assertionText string, err error) {
 	}
 }
 
+func checkNoError(t *testing.T, assertionText string, err error) error {
+	if err != nil {
+		return errors.New(assertionText + " FAILED due to error: " + err.Error())
+	}
+	return nil
+}
+
 func assertIntsEqual(t *testing.T, assertionText string, expected int, actual int) {
 	if actual != expected {
 		t.Fatal(assertionText + " FAILED: expected " + strconv.Itoa(expected) + ", actual " + strconv.Itoa(actual))
 	}
+}
+
+func checkIntsEqual(t *testing.T, assertionText string, expected int, actual int) error {
+	if actual != expected {
+		return errors.New(assertionText + " FAILED: expected " + strconv.Itoa(expected) + ", actual " + strconv.Itoa(actual))
+	}
+	return nil
 }
 
 func assertStringsEqual(t *testing.T, assertionText string, expected string, actual string) {
@@ -30,39 +47,203 @@ func assertStringsEqual(t *testing.T, assertionText string, expected string, act
 	}
 }
 
+func checkStringsEqual(t *testing.T, assertionText string, expected string, actual string) error {
+	if actual != expected {
+		return errors.New(assertionText + " FAILED: expected " + expected + ", actual " + actual)
+	}
+	return nil
+}
+
 func assertNotNil(t *testing.T, assertionText string, actual interface{}) {
 	if actual == nil {
 		t.Fatal(assertionText + " FAILED: expected a non-nil value")
 	}
 }
 
+func checkNotNil(t *testing.T, assertionText string, actual interface{}) error {
+	if actual == nil {
+		return errors.New(assertionText + " FAILED: expected a non-nil value")
+	}
+	return nil
+}
+
 // Return the sum of fn_completed for all applications and routes
 // Metric values are obtained by scraping the /metrics endpoint directly
-func getCompleted(t *testing.T) int {
-	completed := 0
-	for _, appname := range getApplications(t) {
-		for _, routename := range getRoutes(t, appname) {
-			metrics := getMetrics(t, appname, routename)
-			completed += metrics[completedMet]
-		}
-	}
-	return completed
+func getCompletedForAll(t *testing.T) int {
+	return getMetricForAll(t, completedMet)
 }
 
 // Return the sum of fn_completed for all routes in the specified application
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getCompletedForApp(t *testing.T, appname string) int {
-	completed := 0
-	for _, routename := range getRoutes(t, appname) {
-		completed += getMetrics(t, appname, routename)[completedMet]
-	}
-	return completed
+	return getMetricForApp(t, appname, completedMet)
 }
 
-// Return the value of fn_completed the specified application and route
+// Return the value of fn_completed for the specified application and route
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getCompletedForAppAndRoute(t *testing.T, appname string, routename string) int {
-	return getMetrics(t, appname, routename)[completedMet]
+	return getMetricForAppAndRoute(t, appname, routename, completedMet)
+}
+
+// Return the sum of fn_failed for all applications and routes
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getFailedForAll(t *testing.T) int {
+	return getMetricForAll(t, failedMet)
+}
+
+// Return the sum of fn_failed for all routes in the specified application
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getFailedForApp(t *testing.T, appname string) int {
+	return getMetricForApp(t, appname, failedMet)
+}
+
+// Return the value of fn_failed for the specified application and route
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getFailedForAppAndRoute(t *testing.T, appname string, routename string) int {
+	return getMetricForAppAndRoute(t, appname, routename, failedMet)
+}
+
+// Return the sum of fn_calls for all applications and routes
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getCallsForAll(t *testing.T) int {
+	return getMetricForAll(t, callsMet)
+}
+
+// Return the sum of fn_calls for all routes in the specified application
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getCallsForApp(t *testing.T, appname string) int {
+	return getMetricForApp(t, appname, callsMet)
+}
+
+// Return the value of fn_calls for the specified application and route
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getCallsForAppAndRoute(t *testing.T, appname string, routename string) int {
+	return getMetricForAppAndRoute(t, appname, routename, callsMet)
+}
+
+// Return the sum of fn_errors for all applications and routes
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getErrorsForAll(t *testing.T) int {
+	return getMetricForAll(t, errorsMet)
+}
+
+// Return the sum of fn_errors for all routes in the specified application
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getErrorsForApp(t *testing.T, appname string) int {
+	return getMetricForApp(t, appname, errorsMet)
+}
+
+// Return the value of fn_errors for the specified application and route
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getErrorsForAppAndRoute(t *testing.T, appname string, routename string) int {
+	return getMetricForAppAndRoute(t, appname, routename, errorsMet)
+}
+
+// Return the sum of fn_timedout for all applications and routes
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getTimedOutForAll(t *testing.T) int {
+	return getMetricForAll(t, timedoutMet)
+}
+
+// Return the sum of fn_timedout for all routes in the specified application
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getImedOutForApp(t *testing.T, appname string) int {
+	return getMetricForApp(t, appname, timedoutMet)
+}
+
+// Return the value of fn_timedout for the specified application and route
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getTimedOutForAppAndRoute(t *testing.T, appname string, routename string) int {
+	return getMetricForAppAndRoute(t, appname, routename, timedoutMet)
+}
+
+// Return the sum of the specified Prometheus gauge or counter metric for all applications and routes
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getMetricForAll(t *testing.T, metricname string) int {
+	sum := 0
+	for _, appname := range getApplications(t) {
+		for _, routename := range getRoutes(t, appname) {
+			metrics := getAllMetricsForAppAndRoute(t, appname, routename)
+			sum += metrics[metricname]
+		}
+	}
+	return sum
+}
+
+// Return the sums of all metrics for all applications and routes
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getAllMetricsForAll(t *testing.T) map[string]int {
+	result := make(map[string]int)
+	for _, appname := range getApplications(t) {
+		for _, routename := range getRoutes(t, appname) {
+			allMetricsForAppAndRoute := getAllMetricsForAppAndRoute(t, appname, routename)
+			for _, metricname := range requiredMetrics {
+				result[metricname] = result[metricname] + allMetricsForAppAndRoute[metricname]
+			}
+		}
+	}
+	return result
+}
+
+// Return the sum of the specified Prometheus gauge or counter metric for all routes in the specified application
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getMetricForApp(t *testing.T, appname string, metricname string) int {
+	sum := 0
+	for _, routename := range getRoutes(t, appname) {
+		sum += getAllMetricsForAppAndRoute(t, appname, routename)[metricname]
+	}
+	return sum
+}
+
+// Return the sums of all metrics for all routes in the specified application
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getAllMetricsForApp(t *testing.T, appname string) map[string]int {
+	result := make(map[string]int)
+
+	for _, routename := range getRoutes(t, appname) {
+		allMetricsForAppAndRoute := getAllMetricsForAppAndRoute(t, appname, routename)
+		for _, metricname := range requiredMetrics {
+			result[metricname] = result[metricname] + allMetricsForAppAndRoute[metricname]
+		}
+	}
+	return result
+}
+
+// Return the value of the specified Prometheus gauge or counter metric for the specified application and route
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getMetricForAppAndRoute(t *testing.T, appname string, routename string, metricname string) int {
+	return getAllMetricsForAppAndRoute(t, appname, routename)[metricname]
+}
+
+// Get all metrics for the specified application and name
+// Metric values are obtained by scraping the /metrics endpoint directly
+func getAllMetricsForAppAndRoute(t *testing.T, appname string, routename string) map[string]int {
+
+	result := make(map[string]int)
+
+	// get all Prometheus metrics
+	scrapedMetrics := getURLAsString(t, "http://localhost:8080/metrics")
+
+	for _, thisMetricName := range requiredMetrics {
+		var thisMetricValue int
+		var err error
+		//regularExpression := thisMetricName + `{app="` + appname + `",path="/` + routename + `"} (\d+)`
+		regularExpression := thisMetricName + `{` + appnameLabel + `="` + appname + `",` + pathLabel + `="/` + routename + `"} (\d+)`
+
+		re := regexp.MustCompile(regularExpression)
+		matches := re.FindStringSubmatch(scrapedMetrics)
+		if len(matches) == 0 {
+			thisMetricValue = 0
+		} else {
+			thisMetricValue, err = strconv.Atoi(matches[1])
+			if err != nil {
+				t.Fatal(err)
+			}
+		}
+		result[thisMetricName] = thisMetricValue
+	}
+	return result
+
 }
 
 // Return the names of all applications
@@ -133,20 +314,10 @@ func getURLAsString(t *testing.T, url string) string {
 
 // GET the specified URL and return the result as unmarshalled JSON
 func getURLAsJSON(t *testing.T, url string) interface{} {
-	httpClient := http.Client{
-		Timeout: time.Second * 2, // Maximum of 2 secs
-	}
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	res, err := getURL(url)
 	if err != nil {
 		t.Fatal(err.Error())
-	}
-
-	req.Header.Set("User-Agent", "github.com/fnproject/ext-statsapi/main-test")
-
-	res, getErr := httpClient.Do(req)
-	if getErr != nil {
-		t.Fatal(getErr.Error())
 	}
 
 	body, readErr := ioutil.ReadAll(res.Body)
@@ -160,4 +331,32 @@ func getURLAsJSON(t *testing.T, url string) interface{} {
 		t.Fatal(readErr.Error())
 	}
 	return m
+}
+
+func getURL(url string) (*http.Response, error) {
+	httpClient := http.Client{
+		Timeout: time.Second * 2, // Maximum of 2 secs
+	}
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return &http.Response{}, err
+	}
+
+	req.Header.Set("User-Agent", "github.com/fnproject/ext-statsapi/stats-test")
+
+	resp, getErr := httpClient.Do(req)
+	if getErr != nil {
+		return &http.Response{}, err
+	}
+
+	return resp, nil
+}
+
+func getURLWithPanic(url string) *http.Response {
+	resp, err := getURL(url)
+	if err != nil {
+		panic(err)
+	}
+	return resp
 }

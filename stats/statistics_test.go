@@ -1,7 +1,10 @@
 package stats
 
 import (
+	"os"
+	"strconv"
 	"testing"
+	"time"
 )
 
 // Requires the following to be running
@@ -14,6 +17,47 @@ import (
 //   bash test/run-hot-sync.bash
 //   bash test/run-hot-async.bash
 
+func TestMain(m *testing.M) {
+	setup()
+	code := m.Run()
+	shutdown()
+	os.Exit(code)
+}
+
+func setup() {
+	// call some functions
+
+	//cold sync
+	for i := 0; i < 10; i++ {
+		getURLWithPanic("localhost:8080/r/hello-cold-sync-a/hello-cold-sync-a1")
+	}
+	// hot sync
+	for i := 0; i < 10; i++ {
+		getURLWithPanic("http://localhost:8080/r/hello-hot-sync-a/hello-hot-sync-a1")
+	}
+
+	//cold async
+	getURLWithPanic("http://localhost:8080/r/hello-cold-async-a/hello-cold-async-a1")
+	getURLWithPanic("http://localhost:8080/r/hello-cold-async-a/hello-cold-async-a2")
+	getURLWithPanic("http://localhost:8080/r/hello-cold-async-a/hello-cold-async-a3")
+	getURLWithPanic("http://localhost:8080/r/hello-cold-async-a/hello-cold-async-a1")
+	getURLWithPanic("http://localhost:8080/r/hello-cold-async-a/hello-cold-async-a2")
+	getURLWithPanic("http://localhost:8080/r/hello-cold-async-a/hello-cold-async-a1")
+	getURLWithPanic("http://localhost:8080/r/hello-cold-async-b/hello-cold-async-b1")
+	getURLWithPanic("http://localhost:8080/r/hello-cold-async-b/hello-cold-async-b2")
+	// don't call this last one so we can check the stats of a function that has never been called
+	//getURLWithPanic("localhost:8080/r/hello-cold-async-b/hello-cold-async-b3")
+
+	//hot async
+	for i := 0; i < 10; i++ {
+		getURLWithPanic("localhost:8080/r/hello-hot-async-a/hello-hot-async-a1")
+	}
+}
+
+func shutdown() {
+
+}
+
 // Test a query which will return an error from the extension (rather than from the main router, such as app or route not found)
 func TestBadRoute(t *testing.T) {
 	url := "http://localhost:8080/v1/apps/hello-cold-sync-a/routes/hello-cold-sync-a1/stats?step=Wombat"
@@ -23,10 +67,10 @@ func TestBadRoute(t *testing.T) {
 
 // Test sync cold
 func TestNeverCalled(t *testing.T) {
-	// verify stats for a function that has never been called (since server startup)
-	url := "http://localhost:8080/v1/apps/hello-cold-async-b/routes/hello-cold-async-b3/stats"
-	response := getURLAsJSON(t, url)
-	verifySuccessfulJSON(t, response, 0)
+	// verify stats for a function that exists but has never been called (since server startup)
+	appname := "hello-cold-async-b"
+	routename := "hello-cold-async-b3"
+	verifyWithRetries(t, appname, routename)
 }
 
 func TestAllFuncs(t *testing.T) {
@@ -36,9 +80,9 @@ func TestAllFuncs(t *testing.T) {
 	// test/run-cold-async.bash
 	// test/run-hot-sync.bash
 	// test/run-hot-async.bash
-	url := "http://localhost:8080/v1/stats"
-	response := getURLAsJSON(t, url)
-	verifySuccessfulJSON(t, response, getCompleted(t))
+	appname := ""
+	routename := ""
+	verifyWithRetries(t, appname, routename)
 }
 
 func TestAllFuncsPerApp(t *testing.T) {
@@ -46,9 +90,8 @@ func TestAllFuncsPerApp(t *testing.T) {
 	// Assumes all the following have been run
 	// test/run-cold-async.bash
 	appname := "hello-cold-async-a"
-	url := "http://localhost:8080/v1/apps/" + appname + "/stats"
-	response := getURLAsJSON(t, url)
-	verifySuccessfulJSON(t, response, getCompletedForApp(t, appname))
+	routename := ""
+	verifyWithRetries(t, appname, routename)
 }
 
 // Test sync cold
@@ -57,9 +100,7 @@ func TestSyncCold(t *testing.T) {
 	// verify stats for sync cold functions
 	appname := "hello-cold-sync-a"
 	routename := "hello-cold-sync-a1"
-	url := "http://localhost:8080/v1/apps/" + appname + "/routes/" + routename + "/stats"
-	response := getURLAsJSON(t, url)
-	verifySuccessfulJSON(t, response, getCompletedForAppAndRoute(t, appname, routename))
+	verifyWithRetries(t, appname, routename)
 }
 
 // Test async cold
@@ -68,9 +109,7 @@ func TestAsyncCold(t *testing.T) {
 	// verify stats for async cold functions
 	appname := "hello-cold-async-a"
 	routename := "hello-cold-async-a1"
-	url := "http://localhost:8080/v1/apps/" + appname + "/routes/" + routename + "/stats"
-	response := getURLAsJSON(t, url)
-	verifySuccessfulJSON(t, response, getCompletedForAppAndRoute(t, appname, routename))
+	verifyWithRetries(t, appname, routename)
 }
 
 // Test sync hot
@@ -79,9 +118,7 @@ func TestSyncHot(t *testing.T) {
 	// verify stats for sync hot functions
 	appname := "hello-hot-sync-a"
 	routename := "hello-hot-sync-a1"
-	url := "http://localhost:8080/v1/apps/" + appname + "/routes/" + routename + "/stats"
-	response := getURLAsJSON(t, url)
-	verifySuccessfulJSON(t, response, getCompletedForAppAndRoute(t, appname, routename))
+	verifyWithRetries(t, appname, routename)
 }
 
 // Test async hot
@@ -90,80 +127,192 @@ func TestAsyncHot(t *testing.T) {
 	// verify stats for async hot functions
 	appname := "hello-hot-async-a"
 	routename := "hello-hot-async-a1"
-	url := "http://localhost:8080/v1/apps/" + appname + "/routes/" + routename + "/stats"
-	response := getURLAsJSON(t, url)
-	verifySuccessfulJSON(t, response, getCompletedForAppAndRoute(t, appname, routename))
+	verifyWithRetries(t, appname, routename)
 }
 
-// Verify the JSON that is returned from a successful call
-func verifySuccessfulJSON(t *testing.T, response interface{}, expectedCompleted int) {
+func verifyWithRetries(t *testing.T, appname string, routename string) {
+
+	// work out what stats API URL to call
+	var url string
+	if appname == "" && routename == "" {
+		url = "http://localhost:8080/v1/stats"
+	} else if routename == "" {
+		url = "http://localhost:8080/v1/apps/" + appname + "/stats"
+	} else {
+		url = "http://localhost:8080/v1/apps/" + appname + "/routes/" + routename + "/stats"
+	}
+
+	startTime := time.Now()
+	timeout := time.Duration(60) * time.Second
+	var attempt int
+	var err error
+
+	// loop until timeout
+	for time.Now().Sub(startTime) < timeout {
+		if attempt > 0 {
+			// except for the first time, wait 10 seconds before trying again
+			t.Log("Sleeping before iteration " + strconv.Itoa(attempt))
+			time.Sleep(time.Duration(10) * time.Second)
+		}
+		attempt++
+
+		// call the stats API and obtain the response
+		response := getURLAsJSON(t, url)
+		t.Log("Response on attempt " + strconv.Itoa(attempt))
+		t.Log(response)
+
+		// get basic metrics by scraping the /metrics endpoint directly
+		var expectedMetrics map[string]int
+		if appname == "" && routename == "" {
+			expectedMetrics = getAllMetricsForAll(t)
+		} else if routename == "" {
+			expectedMetrics = getAllMetricsForApp(t, appname)
+		} else {
+			expectedMetrics = getAllMetricsForAppAndRoute(t, appname, routename)
+		}
+
+		t.Log("expectedMetrics on attempt " + strconv.Itoa(attempt))
+		t.Log(expectedMetrics)
+
+		err = verifyOnce(t, response, expectedMetrics)
+
+		if err == nil {
+			// no error encountered so break out of the loop
+			break
+		}
+
+	}
+
+	if err != nil {
+		var errorMessage = "Test failed on attempt " + strconv.Itoa(attempt) + ": " + err.Error()
+		t.Fatal(errorMessage)
+	}
+
+}
+
+func verifyOnce(t *testing.T, response interface{}, expectedMetrics map[string]int) error {
+	var err error
 
 	responseAsMap := response.(map[string]interface{})
 
 	// top level of JSON should be two keys, status and data
-	assertIntsEqual(t, "Number of keys in top-level JSON", 2, len(responseAsMap))
+	err = checkIntsEqual(t, "Number of keys in top-level JSON", 2, len(responseAsMap))
+	if err != nil {
+		return err
+	}
 
 	// check status
-	assertNotNil(t, "status field should be present", responseAsMap["status"])
+	err = checkNotNil(t, "status field should be present", responseAsMap["status"])
+	if err != nil {
+		return err
+	}
 	statusAsString := responseAsMap["status"].(string)
-	assertStringsEqual(t, "Status field", "success", statusAsString)
+	err = checkStringsEqual(t, "Status field", "success", statusAsString)
+	if err != nil {
+		return err
+	}
 
 	// check data
-	assertNotNil(t, "data field should be present", responseAsMap["data"])
+	err = checkNotNil(t, "data field should be present", responseAsMap["data"])
+	if err != nil {
+		return err
+	}
 	dataAsMap := responseAsMap["data"].(map[string]interface{})
-	assertIntsEqual(t, "Number of keys in data", 3, len(dataAsMap))
-
-	// check data -> completed
-	assertNotNil(t, "completed field should be present", dataAsMap["completed"])
-	completedAsArray := dataAsMap["completed"].([]interface{})
-	// if any time-value pairs are present, verify them
-	for _, timeAndValuePair := range completedAsArray {
-		timeAndValuePairAsMap := timeAndValuePair.(map[string]interface{})
-		// check data -> completed -> time
-		assertNotNil(t, "time field should be present", timeAndValuePairAsMap["time"])
-		// check data -> completed -> value
-		assertNotNil(t, "value field should be present", timeAndValuePairAsMap["value"])
-	}
-	// verify latest completed count matches expectedCompleted
-	if len(completedAsArray) > 0 {
-		lastTimeAndValuePair := completedAsArray[len(completedAsArray)-1]
-		lastTimeAndValuePairAsMap := lastTimeAndValuePair.(map[string]interface{})
-		lastValue := lastTimeAndValuePairAsMap["value"]
-		lastValueAsFloat64 := lastValue.(float64)
-		lastvalueAsInt := int(lastValueAsFloat64)
-		assertIntsEqual(t, "Completed count", expectedCompleted, lastvalueAsInt)
-	} else {
-		// Completed array is empty which implies a completed count of zero
-		assertIntsEqual(t, "Completed array is empty", expectedCompleted, 0)
+	err = checkIntsEqual(t, "Number of keys in data", 6, len(dataAsMap))
+	if err != nil {
+		return err
 	}
 
-	// check data -> failed
-	assertNotNil(t, "failed field should be present", dataAsMap["failed"])
-	failedAsArray := dataAsMap["completed"].([]interface{})
-	// if any time-value pairs are present, verify them
-	for _, timeAndValuePair := range failedAsArray {
-		timeAndValuePairAsMap := timeAndValuePair.(map[string]interface{})
-
-		// check data -> completed -> time
-		assertNotNil(t, "time field should be present", timeAndValuePairAsMap["time"])
-
-		// check data -> completed -> value
-		assertNotNil(t, "value field should be present", timeAndValuePairAsMap["value"])
+	// check the fields in the data array that correspond to basic metrics
+	err = checkMetricField(t, dataAsMap, "calls", expectedMetrics["fn_calls"])
+	if err != nil {
+		return err
+	}
+	err = checkMetricField(t, dataAsMap, "completed", expectedMetrics["fn_completed"])
+	if err != nil {
+		return err
+	}
+	err = checkMetricField(t, dataAsMap, "failed", expectedMetrics["fn_failed"])
+	if err != nil {
+		return err
+	}
+	err = checkMetricField(t, dataAsMap, "timedout", expectedMetrics["fn_timedout"])
+	if err != nil {
+		return err
+	}
+	err = checkMetricField(t, dataAsMap, "errors", expectedMetrics["fn_errors"])
+	if err != nil {
+		return err
 	}
 
-	// check data -> durations
-	assertNotNil(t, "durations field should be present", dataAsMap["durations"])
-	durationsAsArray := dataAsMap["completed"].([]interface{})
+	// check the fields in the data array that correspond to durations
+	err = checkNotNil(t, "durations field should be present", dataAsMap["durations"])
+	if err != nil {
+		return err
+	}
+	durationsAsArray := dataAsMap["durations"].([]interface{})
 	// if any time-value pairs are present, verify them
 	for _, timeAndValuePair := range durationsAsArray {
 		timeAndValuePairAsMap := timeAndValuePair.(map[string]interface{})
 
-		// check data -> completed -> time
-		assertNotNil(t, "time field should be present", timeAndValuePairAsMap["time"])
+		// check data -> durations -> element -> time
+		err = checkNotNil(t, "time field should be present", timeAndValuePairAsMap["time"])
+		if err != nil {
+			return err
+		}
 
-		// check data -> completed -> value
-		assertNotNil(t, "value field should be present", timeAndValuePairAsMap["value"])
+		// check data -> durations -> element -> value
+		err = checkNotNil(t, "value field should be present", timeAndValuePairAsMap["value"])
+		if err != nil {
+			return err
+		}
 	}
+
+	// success!
+	return nil
+}
+
+func checkMetricField(t *testing.T, dataAsMap map[string]interface{}, jsonkey string, expectedValue int) error {
+	var err error
+
+	err = checkNotNil(t, "field "+jsonkey+" should be present", dataAsMap[jsonkey])
+	if err != nil {
+		return err
+	}
+	metricAsArray := dataAsMap[jsonkey].([]interface{})
+	// if any time-value pairs are present, verify them
+	for _, timeAndValuePair := range metricAsArray {
+		timeAndValuePairAsMap := timeAndValuePair.(map[string]interface{})
+		// check data -> completed -> time
+		err = checkNotNil(t, "time field should be present", timeAndValuePairAsMap["time"])
+		if err != nil {
+			return err
+		}
+		// check data -> completed -> value
+		err = checkNotNil(t, "value field should be present", timeAndValuePairAsMap["value"])
+		if err != nil {
+			return err
+		}
+	}
+	// verify latest metric count matches expectedValue
+	if len(metricAsArray) > 0 {
+		lastTimeAndValuePair := metricAsArray[len(metricAsArray)-1]
+		lastTimeAndValuePairAsMap := lastTimeAndValuePair.(map[string]interface{})
+		lastValue := lastTimeAndValuePairAsMap["value"]
+		lastValueAsFloat64 := lastValue.(float64)
+		lastvalueAsInt := int(lastValueAsFloat64)
+		err = checkIntsEqual(t, jsonkey, expectedValue, lastvalueAsInt)
+		if err != nil {
+			return err
+		}
+	} else {
+		// metric array is empty which implies a ount of zero
+		err = checkIntsEqual(t, jsonkey+" array is empty", expectedValue, 0)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Verify the basic shape of the JSON that is returned for a failed call
@@ -186,75 +335,3 @@ func verifyFailedJSON(t *testing.T, response interface{}, expectedError string) 
 		assertStringsEqual(t, "error field", expectedError, errorAsString)
 	}
 }
-
-//func TestGlobalStats(t *testing.T) {
-//	// set neither start time or end time
-//	//url := "http://localhost:8080/v1/stats"
-//
-//	// start time only - pick a time an hour ago (endtime will default to now)
-//	//starttimeString := time.Now().Add(-(time.Duration(60) * time.Minute)).Format(prometheusTimeFormat)
-//	//url := "http://localhost:8080/v1/stats?starttime=" + starttimeString
-//
-//	// end time only - pick a time an hour ago (start time will default to 5 mins before that)
-//	//endtimeString := time.Now().Add(-(time.Duration(60) * time.Minute)).Format(prometheusTimeFormat)
-//	//url := "http://localhost:8080/v1/stats?endtime=" + endtimeString
-//
-//	// start time and end time - end time is now, start time is 10 mins ago, step is 30s (so expect about 20 values)
-//	endtimeString := time.Now().Format(prometheusTimeFormat)
-//	starttimeString := time.Now().Add(-(time.Duration(10) * time.Minute)).Format(prometheusTimeFormat)
-//	url := "http://localhost:8080/v1/stats?starttime=" + starttimeString + "&endtime=" + endtimeString + "&step=30s"
-//
-//	// could also test not setting step
-//	// could also test invalid values for start/end/step
-//	// could also test end time before start time
-//
-//	t.Log("Sending " + url)
-//	send(t, url)
-//
-//}
-//
-//func send(t *testing.T, url string) {
-//	httpClient := http.Client{
-//		Timeout: time.Second * 2, // Maximum of 2 secs
-//	}
-//
-//	req, err := http.NewRequest(http.MethodGet, url, nil)
-//	if err != nil {
-//		t.Fatal("Unable to perform HTTP request" + err.Error())
-//		return
-//	}
-//
-//	req.Header.Set("User-Agent", "github.com/fnproject/ext-statsapi/main-test")
-//
-//	res, getErr := httpClient.Do(req)
-//	if getErr != nil {
-//		t.Fatal("Unable to perform HTTP request" + getErr.Error())
-//		return
-//	}
-//
-//	body, readErr := ioutil.ReadAll(res.Body)
-//	if readErr != nil {
-//		t.Fatal("Unable to read data returned from HTTP request" + readErr.Error())
-//		return
-//	}
-//
-//	t.Log("=Received============================================")
-//	t.Log(string(body[:]))
-//	t.Log("=====================================================")
-//
-//	thisMetricsResponse := metricsResponse{}
-//	jsonErr := json.Unmarshal(body, &thisMetricsResponse)
-//	if jsonErr != nil {
-//		t.Fatal("Error unmarshalling returned data" + jsonErr.Error())
-//	}
-//	t.Log("Status=" + thisMetricsResponse.Status)
-//	if thisMetricsResponse.Status != "success" {
-//		thisErrorResponse := errorResponse{}
-//		jsonErr := json.Unmarshal(body, &thisErrorResponse)
-//		if jsonErr != nil {
-//			t.Fatal("Status=" + thisMetricsResponse.Status)
-//		}
-//		t.Fatal("Status=" + thisErrorResponse.Status + ":" + thisErrorResponse.Error)
-//	}
-//	t.Fatal("Failing test to force log output to be visible")
-//}
