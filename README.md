@@ -181,7 +181,7 @@ If no function calls timed out function the array may be empty.
 
 In addition the `data` element contains the element `failed`. This is included for backward compatibility. It is deprecated and will be removed in the future.
 
-* The `failed` element is an array of objects. Each object contains a single observation of the `fn_api_failed` counter metric at a specific time.
+* The `failed` element is an array of objects. Each object contains a single observation of the `fn_failed` counter metric at a specific time.
 This is a count of failed or timed out function calls since the server was started.
 If there were no failures the array may be empty.  
 
