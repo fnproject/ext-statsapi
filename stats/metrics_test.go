@@ -144,6 +144,8 @@ func TestHotAsyncWithPanic(t *testing.T) {
 
 func doTestSuccessful(t *testing.T, appname string, routename string, sync bool) {
 
+	waitUntilNoQueuedOrRunningFunctions(t)
+
 	metrics0 := getAllMetricsForAppAndRoute(t, appname, routename)
 
 	// make a function call which will NOT timeout
@@ -168,6 +170,8 @@ func doTestSuccessful(t *testing.T, appname string, routename string, sync bool)
 }
 
 func doTestWithTimeout(t *testing.T, appname string, routename string, sync bool, hot bool) {
+
+	waitUntilNoQueuedOrRunningFunctions(t)
 
 	metrics0 := getAllMetricsForAppAndRoute(t, appname, routename)
 
@@ -213,6 +217,8 @@ func doTestWithTimeout(t *testing.T, appname string, routename string, sync bool
 }
 
 func doTestWithPanic(t *testing.T, appname string, routename string, sync bool) {
+
+	waitUntilNoQueuedOrRunningFunctions(t)
 
 	metrics0 := getAllMetricsForAppAndRoute(t, appname, routename)
 
@@ -317,4 +323,26 @@ func call(t *testing.T, appname string, routename string, sync bool, forceTimeou
 	// now check the status of the call
 
 	return response
+}
+
+func waitUntilNoQueuedOrRunningFunctions(t *testing.T) {
+	startTime := time.Now()
+	timeout := time.Duration(60) * time.Second
+	var attempt int
+
+	// loop until timeout
+	for time.Now().Sub(startTime) < timeout {
+		if attempt > 0 {
+			// except for the first time, wait 10 seconds before trying again
+			t.Log("Sleeping before iteration " + strconv.Itoa(attempt))
+			time.Sleep(time.Duration(10) * time.Second)
+		}
+		attempt++
+
+		expectedMetrics := getAllMetricsForAll(t)
+		if expectedMetrics["fn_queued"] == 0 && expectedMetrics["fn_running"] == 0 {
+			break
+		}
+
+	}
 }
