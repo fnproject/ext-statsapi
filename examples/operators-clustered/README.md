@@ -9,33 +9,14 @@ This example uses Docker Compose.
 ## Build your custom image
 
 First of all you need to build a custom Fn server docker image containing the statistics API extension. 
-This is described in  [How to build a custom Fn server docker image](./examples/operators/README.md).
+This is described in  [How to build a custom Fn server docker image](../operators/README.md).
 For convenience the same instructions are repeated below.
 
-## Configure `ext.yaml`
-
-You need just one file, `ext.yaml`, in which you must list the extensions to be included in your custom Fn server image. 
-This directory contains an example [ext.yaml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/ext.yaml) configured to include a single extension, the statistics API
-
-```yaml
-extensions:
-- name: github.com/fnproject/ext-statsapi/stats
-```
-
-If you require additional extensions, add a `name` element for each one.
-
-## Build your custom image
-
-We will use the example [ext.yaml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/ext.yaml) in this directory:
+To build your custom image using the same configuration file  `ext.yaml` as in that other example:
 ```sh
 cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
-```
-
-To build your custom image:
-```sh
 fn build-server -t imageuser/imagename
 ```
-
 You can then use standard docker tools to deploy it in a docker image repository if required.
 
 ## Run a cluster of two custom Fn images and Prometheus using Docker Compose
@@ -82,8 +63,8 @@ scrape_configs:
 
     static_configs:
       # Specify all the fn servers from which metrics will be scraped
-      - targets: ['fnserver0:8080','fnserver1:8081'] # Uses /metrics by default
-      ```
+      - targets: ['fnserver0:8080','fnserver1:8081'] # Uses /metrics by default      
+```
 Note the last line: this configures Prometheus to scrape metrics from two Fn servers running on `fnserver0:8080` and `fnserver1:8081`, 
 where `fnserver0` and `fnserver0` are defined in [docker-compose.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators-clustered/docker-compose.yml)
 to refer to the two Fn servers.
@@ -113,10 +94,10 @@ You can now use the statistics API to obtain aggregated metrics across both Fn s
 ```
 curl localhost:8080/v1/apps/hello-cold-async-a/stats
 ```
-Alternatively open a browser at (host:8080/v1/apps/hello-cold-async-a/stats
+Alternatively open a browser at (localhost:8080/v1/apps/hello-cold-async-a/stats)
 
 Note that you can use this API on either of the two custom Fn servers and get the same result. Try the following and compare:
 ```
 curl localhost:8081/v1/apps/hello-cold-async-a/stats
 ```
-Alternatively open a browser at (host:8081/v1/apps/hello-cold-async-a/stats
+Alternatively open a browser at (localhost:8081/v1/apps/hello-cold-async-a/stats)

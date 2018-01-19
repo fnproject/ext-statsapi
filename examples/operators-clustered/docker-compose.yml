@@ -1,31 +1,62 @@
 version: '3'
 services:
+  logstore:
+    hostname: logstore
+    image: minio/minio
+    ports:
+      - "9091:9000"
+    environment:
+      - MINIO_ACCESS_KEY=admin
+      - MINIO_SECRET_KEY=password
+    volumes:
+      - ./data/logstore:/data
+    command: server /data
+  db:
+    image: "mysql"
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - "MYSQL_DATABASE=funcs"
+      - "MYSQL_ROOT_PASSWORD=root"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+  mq:
+    image: "redis"
+    restart: always
+    ports:
+      - "6379:6379"
   fnserver0:
     image: imageuser/imagename
     restart: always
+    depends_on:
+      - mq
+      - db
     ports:
       - "8080:8080"
     environment:
       FN_PORT: "8080"
-      FN_EXT_STATS_PROM_HOST: "prometheus"
+      FN_EXT_STATS_PROM_HOST: "prometheus" 
+      FN_DB_URL: "mysql://root:root@tcp(db:3306)/funcs"
+      FN_MQ_URL: "redis://mq:6379/"
+      FN_LOGSTORE_URL: "s3://admin:password@logstore:9000/us-east-1/fnlogs"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - $PWD/data0:/app/data  
   fnserver1:
     image: imageuser/imagename
     restart: always
+    depends_on:
+      - mq
+      - db
     ports:
       - "8081:8081"
-    links:
-      - "db"
-      - "mq"
-      - "logstore"
     environment:
       FN_PORT: "8081"
       FN_EXT_STATS_PROM_HOST: "prometheus" 
+      FN_DB_URL: "mysql://root:root@tcp(db:3306)/funcs"
+      FN_MQ_URL: "redis://mq:6379/"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - $PWD/data1:/app/data  
   grafana:
     image: grafana/grafana
     restart: always
