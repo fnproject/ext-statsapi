@@ -1,0 +1,54 @@
+version: '3'
+services:
+  fnserver0:
+    image: imageuser/imagename
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      FN_PORT: "8080"
+      FN_EXT_STATS_PROM_HOST: "prometheus"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $PWD/data0:/app/data  
+  fnserver1:
+    image: imageuser/imagename
+    restart: always
+    ports:
+      - "8081:8081"
+    links:
+      - "db"
+      - "mq"
+      - "logstore"
+    environment:
+      FN_PORT: "8081"
+      FN_EXT_STATS_PROM_HOST: "prometheus" 
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $PWD/data1:/app/data  
+  grafana:
+    image: grafana/grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    links:
+      - fnserver0
+      - fnserver1
+      - prometheus
+    depends_on:
+      - fnserver0
+      - fnserver1
+      - prometheus
+  prometheus:
+    image: prom/prometheus
+    restart: always
+    depends_on:
+      - fnserver0
+      - fnserver1
+    ports:
+      - "9090:9090"
+    links:
+      - fnserver0
+      - fnserver1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml

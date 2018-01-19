@@ -1,0 +1,5 @@
+# This is an example ext.yaml file configured to add the statistics API extension
+# See https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/README.md
+
+extensions:
+- name: github.com/fnproject/ext-statsapi/stats
