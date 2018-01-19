@@ -3,11 +3,10 @@ package stats
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-
 	"github.com/fnproject/ext-statsapi/fncommon"
 	"github.com/fnproject/fn/api/models"
 	"github.com/fnproject/fn/fnext"
+	"net/http"
 )
 
 const (
@@ -57,23 +56,13 @@ func (h *routeStatisticsHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	fmt.Fprintf(w, string(jsonData))
 }
 
-// query scopes
-const (
-	query_scope_global = iota
-	query_scope_app    = iota
-	query_scope_route  = iota
-)
-
 // these constants represent the various types of statistic returned by this API
 // If you add a new type of statistic you must also
 // (0) add a new entry to the map jsonKeys below
-// (1) add new entries to the three maps (all in build_prometheus_request.go)
-//     promMetricNamesForGlobalQueries,
-//     promMetricNamesForAppScopedQueries and
-//     promMetricNamesForRouteScopedQueries
-//     with the Prometheus metric corresponding to the new metric type
+// (1) add new entries to the maps promMetricNames in build_prometheus_request.go
 // (2) update the map queryBuilders (in build_prometheus_request.go)
 //     with the name of the appropriate query builder for this metric type
+//     this is essentially a case of specifying whether the metric is a histogram or a counter/gauge
 const (
 	completedConst = iota
 	failedConst    = iota
@@ -95,6 +84,9 @@ var jsonKeys = map[int]string{
 	timedoutConst:  "timedout",
 }
 
+var appLabel = "fn_appname"
+var routeLabel = "fn_path"
+
 // Process the request and return the requested data as JSON
 func handle(r *http.Request, appName string, routeName string) []byte {
 
@@ -102,15 +94,6 @@ func handle(r *http.Request, appName string, routeName string) []byte {
 	startTimeString, endTimeString, stepString, err := getQueryParams(r)
 	if err != nil {
 		return getErrorAsJSON(err)
-	}
-
-	var queryScope int
-	if appName == "" {
-		queryScope = query_scope_global
-	} else if routeName == "" {
-		queryScope = query_scope_app
-	} else {
-		queryScope = query_scope_route
 	}
 
 	// create a struct that will contain our response prior to conversion to JSONs
@@ -121,7 +104,7 @@ func handle(r *http.Request, appName string, routeName string) []byte {
 	// for each metric type, query Prometheus and populate the response struct
 	for metricType, jsonKey := range jsonKeys {
 		// construct the Prometheus request URL
-		url := buildPrometheusRequest(queryBuilders[metricType], promHost, promPort, queryScope, metricType, appName, routeName, startTimeString, endTimeString, stepString)
+		url := buildPrometheusRequest(queryBuilders[metricType], promHost, promPort, metricType, appName, routeName, startTimeString, endTimeString, stepString)
 		// execute the Prometheus request and extract the array of time-value pairs from the response
 		metricDataArray, err := executePrometheusRequest(url)
 		if err != nil {

@@ -16,10 +16,6 @@ func executePrometheusRequest(url string) ([]metricsTimeValuePair, error) {
 		Timeout: time.Second * 2, // Maximum of 2 secs
 	}
 
-	//	fmt.Println("== URL sent to Prometheus= ===========================================")
-	//	fmt.Println(url)
-	//	fmt.Println("===End of URL sent to Prometheus =====================================")
-
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
@@ -37,10 +33,6 @@ func executePrometheusRequest(url string) ([]metricsTimeValuePair, error) {
 		return nil, readErr
 	}
 
-	//	fmt.Println("== JSON returned from Prometheus= ====================================")
-	//	fmt.Println(string(body[:]))
-	//	fmt.Println("===End of JSON returned from Prometheus ==============================")
-
 	// Assume result is of type "matrix" (meaning this is a range vector)
 
 	thisPromQueryRangeData := promQueryRangeData{}
@@ -54,12 +46,12 @@ func executePrometheusRequest(url string) ([]metricsTimeValuePair, error) {
 	}
 
 	if len(thisPromQueryRangeData.Data.Result) > 1 {
-		//  we must have got the query wrong
-		// this is a very verbose error message, but it should never happen, so we need all the info we can get
+		// Range query has returned multiple ranges! This should never happen: we must have got the query wrong
+		// Return a suitably verbose error message to allow investigation
 		return nil, errors.New("data array returned by Prometheus has more than one element: url=" + url + ", returned JSON=" + string(body[:]))
 	}
 
-	// how many data time-value pairs have we been given
+	// how many data time-value pairs have we been given?
 	var numberOfTimeValuePairs int
 	if len(thisPromQueryRangeData.Data.Result) == 0 {
 		numberOfTimeValuePairs = 0

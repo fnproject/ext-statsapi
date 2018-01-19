@@ -12,10 +12,6 @@ import (
 // - a Prometheus server, configured to scrape data from the Fn server
 // Also requires the following to be run beforehand
 //   bash test/create.bash
-//   bash test/run-cold-sync.bash
-//   bash test/run-cold-async.bash
-//   bash test/run-hot-sync.bash
-//   bash test/run-hot-async.bash
 
 func TestMain(m *testing.M) {
 	setup()
@@ -75,11 +71,6 @@ func TestNeverCalled(t *testing.T) {
 
 func TestAllFuncs(t *testing.T) {
 	// verify stats for all functions
-	// Assumes all the following have been run
-	// test/run-cold-sync.bash
-	// test/run-cold-async.bash
-	// test/run-hot-sync.bash
-	// test/run-hot-async.bash
 	appname := ""
 	routename := ""
 	verifyWithRetries(t, appname, routename)
@@ -87,15 +78,12 @@ func TestAllFuncs(t *testing.T) {
 
 func TestAllFuncsPerApp(t *testing.T) {
 	// verify stats across all three functions in the app hello-cold-async-a
-	// Assumes all the following have been run
-	// test/run-cold-async.bash
 	appname := "hello-cold-async-a"
 	routename := ""
 	verifyWithRetries(t, appname, routename)
 }
 
 // Test sync cold
-// Assumes test/run-cold-sync.bash has been run
 func TestSyncCold(t *testing.T) {
 	// verify stats for sync cold functions
 	appname := "hello-cold-sync-a"
@@ -104,7 +92,6 @@ func TestSyncCold(t *testing.T) {
 }
 
 // Test async cold
-// Assumes test/run-cold-async.bash has been run
 func TestAsyncCold(t *testing.T) {
 	// verify stats for async cold functions
 	appname := "hello-cold-async-a"
@@ -113,7 +100,6 @@ func TestAsyncCold(t *testing.T) {
 }
 
 // Test sync hot
-// Assumes test/run-hot-sync.bash has been run
 func TestSyncHot(t *testing.T) {
 	// verify stats for sync hot functions
 	appname := "hello-hot-sync-a"
