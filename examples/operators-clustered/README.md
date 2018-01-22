@@ -178,4 +178,4 @@ http://localhost:8080/v1/apps/hello-cold-async-a/stats
 
 Note that you can use this API on either of the two custom Fn servers and get the same result. Try the following and compare:
 
-http://localhost:8080/v1/apps/hello-cold-async-a/stats
+http://localhost:8081/v1/apps/hello-cold-async-a/stats

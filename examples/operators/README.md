@@ -96,6 +96,7 @@ to refer to the Fn server.
 Now start your custom Fn image and Prometheus
 
 ```sh
+cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
 docker-compose up
 ```
 
@@ -145,3 +146,23 @@ docker run --name=prometheus -d -p 9090:9090 \
   --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
 ```
 You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-statsapi/blob/master/README.md).
+
+## Trying out the statistics API 
+
+The following will create three cold functions:
+
+```
+cd $GOPATH/src/github.com/fnproject/ext-statsapi/test/hello-cold-async-a
+fn deploy --all --local
+```
+The following script will run performs 90 function calls. You may wish to run this several times: this will generate some data for you to query using the statistics API. 
+```
+cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
+bash run-cold-async-clustered.bash
+```
+You can now use the statistics API to obtain metrics from the Fn server. If you ran the above script once you should see the number of calls grow to 90.  
+
+The easiest way to explore the statistics API is to run it in a browser, as this usually displays the returned JSON in a readable format:
+
+http://localhost:8080/v1/apps/hello-cold-async-a/stats
+
