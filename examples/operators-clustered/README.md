@@ -1,6 +1,6 @@
 # How to use the statistics API extension with a cluster of custom Fn servers
 
-This example shows how to run a cluster of custom Fn servers and use the statistics API to obtain aggregated statistics across all Fn servers.
+This example demonstrates the use of the statistics API to obtain aggregated statistics from a cluster of Fn servers.
 
 This will be of particular interest to end users and operators.
 
