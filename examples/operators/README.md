@@ -171,7 +171,9 @@ If you ran the above script once you should see the number of calls grow to 90.
 Now try the following API calls. These return statistics for each of the three functions individually:
 
 http://localhost:8080/v1/apps/hello-cold-async-a/routes/hello-cold-async-a1/stats
+
 http://localhost:8080/v1/apps/hello-cold-async-a/routes/hello-cold-async-a2/stats
+
 http://localhost:8080/v1/apps/hello-cold-async-a/routes/hello-cold-async-a3/stats
 
 Finally try the following API call, which returns statistics for all applications:
