@@ -159,13 +159,12 @@ You can now deploy and run functions and try out the statistics API extension.
 
 ## Trying out the statistics API with a cluster of custom Fn servers
 
-Create some simple cold async functions
+Create some simple cold async functions. The following will create three cold functions, which you can then run on either server:
+
 ```
 cd $GOPATH/src/github.com/fnproject/ext-statsapi/test/hello-cold-async-a
 fn deploy --all --local
 ```
-This creates three cold functions, which you can run on either Fn server. To run them on the server that listens on port 8080:
-
 The following script will run performs 90 function calls, 60 on the first server and 30 on the other. You may wish to run this several times: this will generate some data for you to query using the statistics API. 
 ```
 cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators-clustered
