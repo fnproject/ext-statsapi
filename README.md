@@ -9,15 +9,14 @@ Since this is an extension it is not included in the core Fn server:
 to use it you need to build a custom Fn server, configured to include this extension.
 This API also requires a Prometheus server to be running.
 
-There are two examples which describe how to build a custom version of the Fn server: 
+There are two examples which describe how to build a custom version of the Fn server.
+They also describe how to start Prometheus 
+and how to configure the custom Fn server and Prometheus to connect to one another.
 
 * [How to build a custom Fn server docker image](./examples/operators/README.md) (mainly of interest to end users and operators)
 * [How to build a custom Fn server executable](./examples/developers/README.md) (mainly of interest to developers working on the statistics API extension itself)
 
-These examples also describe how to start Prometheus 
-and how to configure the custom Fn server and Prometheus to connect to one another.
-
-There is also an example that describes how to use the statistics API to obtain aggregated statistics from a cluster of Fn servers:
+The following example describes how to use the statistics API to obtain aggregated statistics from a cluster of Fn servers:
 * [How to use the statistics API extension with a cluster of custom Fn servers](./examples/operators-clustered/README.md)
 
 ## Try some API calls
