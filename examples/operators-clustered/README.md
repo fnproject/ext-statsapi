@@ -26,7 +26,7 @@ This takes care of configuring the various processes to connect to each other.
 Install Docker Compose using [these instructions](https://docs.docker.com/compose/install/). 
 
 We will use the [docker-compose.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators-clustered/docker-compose.yml) in this directory.
-You should change `imageuser` to whatever you specified when building your custom Fn image.
+You should change `imageuser` to whatever you specified when building your custom Fn image:
 
 ```yaml
 version: '3'
@@ -116,14 +116,12 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
 ```
 
-This starts two Fn servers using the custom Fn image you created above. 
+This will start two Fn servers using the custom Fn image you created above. 
 One listens on port 8080 and the other listens on port 8081.
 For both Fn server, the environment variable `FN_EXT_STATS_PROM_HOST` is used to specify that the Fn server should fetch
-statistics from a Prometheus server running on the `prometheus:9090`, where   `prometheus` is defined in 
-[docker-compose.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators-clustered/docker-compose.yml)
-to refer to the Prometheus server.
+statistics from a Prometheus server running on the `prometheus:9090`, where   `prometheus` is defined to refer to the Prometheus server.
 
-It also starts Prometheus using the config file [prometheus.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators-clustered/prometheus.yml) 
+It will also start Prometheus using the config file [prometheus.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators-clustered/prometheus.yml):
 ```
 global:
   scrape_interval:     15s # By default, scrape targets every 15 seconds.
@@ -153,10 +151,11 @@ to refer to the two Fn servers.
 Now start your custom Fn images and Prometheus
 
 ```sh
+cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators-clustered
 docker-compose up
 ```
 
-You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-statsapi/blob/master/README.md).
+You can now deploy and run functions and try out the statistics API extension.
 
 ## Trying out the statistics API with a cluster of custom Fn servers
 
