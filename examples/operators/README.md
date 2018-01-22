@@ -59,13 +59,37 @@ services:
       - ${GOPATH}/src/github.com/fnproject/ext-statsapi/examples/operators/prometheus.yml:/etc/prometheus/prometheus.yml
 ```
 
-This starts your custom Fn image. The environment variable `FN_EXT_STATS_PROM_HOST` is used to specify that the Fn server should fetch
-statistics from a Prometheus server running on the `prometheus:9090`, where   `prometheus` is defined in 
-[docker-compose.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/docker-compose.yml)
-to refer to the Prometheus server.
+This will start your custom Fn image. 
 
-It also starts Prometheus using the config file [prometheus.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/prometheus.yml) 
-which configures Prometheus to scrape metrics from a Fn server running on `fnserver:8080`, where `fnserver` is defined in
+The environment variable `FN_EXT_STATS_PROM_HOST` is used to specify that the Fn server should fetch
+statistics from a Prometheus server running on `prometheus:9090`, where   `prometheus` is defined to refer to the Prometheus server.
+
+It will also start Prometheus using the config file [prometheus.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/prometheus.yml):
+
+```
+global:
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'fn-monitor'
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's the Fn server
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'functions'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+
+    static_configs:
+      # Specify all the fn servers from which metrics will be scraped
+      - targets: ['fnserver:8080'] # Uses /metrics by default
+```
+
+Note the last line: this configures Prometheus to scrape metrics from a Fn server running on `fnserver:8080`, where `fnserver` is defined in
 [docker-compose.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/docker-compose.yml)
 to refer to the Fn server.
 
