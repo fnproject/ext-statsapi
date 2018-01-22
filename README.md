@@ -17,6 +17,9 @@ There are two examples which describe how to build a custom version of the Fn se
 These examples also describe how to start Prometheus 
 and how to configure the custom Fn server and Prometheus to connect to one another.
 
+There is also an example that describes how to use the statistics API to obtain aggregated statistics from a cluster of Fn servers:
+* [How to use the statistics API extension with a cluster of custom Fn servers](./examples/operators-clustered/README.md)
+
 ## Try some API calls
 
 If you have Prometheus and a custom Fn server running as described in these examples, 
