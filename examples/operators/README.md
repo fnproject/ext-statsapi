@@ -107,13 +107,15 @@ Alternatively you can start your custom Fn image and Prometheus separately.
 
 ### Run your custom image
 
-The following command is used to run your custom image. Replace `<ip-address>` with the IP address on which the Fn server is listening:
+The following command is used to run your custom image. 
+You should change `imageuser` to whatever you specified when building your custom Fn image and
+replace `<ip-address>` with the IP address on which the Fn server is listening:
 
 ```sh
 docker run --rm --name fnserver -d -it \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v $PWD/data:/app/data -p 8080:8080 \
-  -e FN_EXT_STATS_PROM_HOST=<ip-address> imageuser/imagename
+  -e FN_EXT_STATS_PROM_HOST=<ip-address> imageuser/fn-ext-statsapi
 ```
 
 * `FN_EXT_STATS_PROM_HOST` is an environment variable which specifies the host on which the Prometheus server is running. 
@@ -125,12 +127,12 @@ On Linux you can use
 docker run --rm --name fnserver -d -it \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v $PWD/data:/app/data -p 8080:8080 \
-  -e FN_EXT_STATS_PROM_HOST=`route | grep default | awk '{print $2}'` imageuser/imagename
+  -e FN_EXT_STATS_PROM_HOST=`route | grep default | awk '{print $2}'` imageuser/fn-ext-statsapi
 ```
 ### Start Prometheus
 
 The following command starts prometheus in a Docker container, using the config file `prometheus.yml` in this directory.
-Replace `<ip-address>` with the IP address on which the Fn server is listening:
+You should replace `<ip-address>` with the IP address on which the Fn server is listening:
 ```
 docker run --name=prometheus -d -p 9090:9090 \
   -v ${GOPATH}/src/github.com/fnproject/ext-statsapi/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml \
@@ -142,5 +144,4 @@ docker run --name=prometheus -d -p 9090:9090 \
   -v ${GOPATH}/src/github.com/fnproject/ext-statsapi/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml \
   --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
 ```
-
 You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-statsapi/blob/master/README.md).
