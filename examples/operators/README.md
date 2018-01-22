@@ -166,7 +166,7 @@ The following API call returns statistics for all functions in the application `
 
 http://localhost:8080/v1/apps/hello-cold-async-a/stats
 
-If you ran the above script once you should see the number of calls grow to 90. 
+If you ran the above script once you should see the number of calls grow to 90. By default this displays statistics for the past five minutes with a step interval of 30s. Find more about [time and step parameters](/README.md#time-and-step-parameters).
 
 Now try the following API calls. These return statistics for each of the three functions individually:
 
