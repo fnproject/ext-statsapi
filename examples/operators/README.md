@@ -9,7 +9,7 @@ It describes two alternative ways to run the custom Fn server docker image:
 * [Run your custom Fn image and Prometheus using Docker Compose](/examples/operators/README.md#run-your-custom-fn-image-and-prometheus-using-docker-compose)
 * [Run your custom Fn image and Prometheus separately](/examples/operators/README.md#run-your-custom-fn-image-and-prometheus-separately)
 
-## Configure `ext.yaml`
+## Build your custom image
 
 You need just one file, `ext.yaml`, in which you must list the extensions to be included in your custom Fn server image. 
 This directory contains an example [ext.yaml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/ext.yaml) configured to include a single extension, the statistics API
@@ -21,16 +21,9 @@ extensions:
 
 If you require additional extensions, add a `name` element for each one.
 
-
-## Build your custom image
-
-We will use the example [ext.yaml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/ext.yaml) in this directory:
+To build your custom image using this `ext.yaml` file:
 ```sh
 cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
-```
-
-To build your custom image:
-```sh
 fn build-server -t imageuser/fn-ext-statsapi
 ```
 If you intend to deploy the image to a docker image repository you will need to change `imageuser` to something suitable such as your repository username. If you are not planning to do this you can leave it unchanged.

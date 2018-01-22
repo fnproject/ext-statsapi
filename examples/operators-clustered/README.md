@@ -174,8 +174,8 @@ You can now use the statistics API to obtain aggregated metrics across both Fn s
 
 The easiest way to explore the statistics API is to run it in a browser, as this usually displays the returned JSON in a readable format:
 
-(http://localhost:8080/v1/apps/hello-cold-async-a/stats)
+http://localhost:8080/v1/apps/hello-cold-async-a/stats
 
 Note that you can use this API on either of the two custom Fn servers and get the same result. Try the following and compare:
 
-(http://localhost:8080/v1/apps/hello-cold-async-a/stats)
+http://localhost:8080/v1/apps/hello-cold-async-a/stats
