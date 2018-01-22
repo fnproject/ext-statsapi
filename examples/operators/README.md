@@ -100,7 +100,7 @@ cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
 docker-compose up
 ```
 
-You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-statsapi/blob/master/README.md).
+You can now deploy and run functions and try out the statistics API extension. See [Trying out the statistics API](/examples/operators/README.md#trying-out-the-statistics-api) below.
 
 ## Run your custom Fn image and Prometheus separately
 
@@ -145,7 +145,7 @@ docker run --name=prometheus -d -p 9090:9090 \
   -v ${GOPATH}/src/github.com/fnproject/ext-statsapi/examples/developers/prometheus.yml:/etc/prometheus/prometheus.yml \
   --add-host="fnserver:`route | grep default | awk '{print $2}'`" prom/prometheus
 ```
-You can now deploy and run functions and try out the statistics API extension as described in the main [README](https://github.com/fnproject/ext-statsapi/blob/master/README.md).
+You can now deploy and run functions and try out the statistics API extension. See [Trying out the statistics API](/examples/operators/README.md#trying-out-the-statistics-api) below.
 
 ## Trying out the statistics API 
 
