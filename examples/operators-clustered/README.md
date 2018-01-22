@@ -14,7 +14,7 @@ For convenience the same instructions are repeated below:
 
 ```sh
 cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
-fn build-server -t imageuser/imagename
+fn build-server -t imageuser/fn-ext-statsapi
 ```
 If you intend to deploy the image to a docker image repository you will need to change `imageuser` to something suitable such as your repository username. If you are not planning to do this you can leave it unchanged.
 
