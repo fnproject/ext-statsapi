@@ -8,17 +8,6 @@ import (
 	"time"
 )
 
-// name of Prometheus metrics
-const (
-	callsMet     = "fn_calls"
-	queuedMet    = "fn_queued"
-	runningMet   = "fn_running"
-	failedMet    = "fn_failed"
-	completedMet = "fn_completed"
-	timedoutMet  = "fn_timedout"
-	errorsMet    = "fn_errors"
-)
-
 // name of Prometheus labels
 const (
 	appnameLabel = "fn_appname"
@@ -160,13 +149,13 @@ func doTestSuccessful(t *testing.T, appname string, routename string, sync bool)
 	metrics1 := getAllMetricsForAppAndRoute(t, appname, routename)
 
 	message := "after calling " + appname + "/" + routename + " with sleeptime " + strconv.Itoa(sleeptime)
-	assertIntsEqual(t, message+" calls should have increased by 1", metrics0[callsMet]+1, metrics1[callsMet])
-	assertIntsEqual(t, message+" completed should have increased by 1", metrics0[completedMet]+1, metrics1[completedMet])
-	assertIntsEqual(t, message+" queued should be unchanged", metrics0[queuedMet], metrics1[queuedMet])
-	assertIntsEqual(t, message+" failed should be unchanged", metrics0[failedMet], metrics1[failedMet])
-	assertIntsEqual(t, message+" running should be unchanged", metrics0[runningMet], metrics1[runningMet])
-	assertIntsEqual(t, message+" timedout should be unchanged", metrics0[timedoutMet], metrics1[timedoutMet])
-	assertIntsEqual(t, message+" errors should be unchanged", metrics0[errorsMet], metrics1[errorsMet])
+	assertIntsEqual(t, message+" calls should have increased by 1", metrics0[promMetricNames[callsConst]]+1, metrics1[promMetricNames[callsConst]])
+	assertIntsEqual(t, message+" completed should have increased by 1", metrics0[promMetricNames[completedConst]]+1, metrics1[promMetricNames[completedConst]])
+	assertIntsEqual(t, message+" queued should be unchanged", metrics0[promMetricNames[queuedConst]], metrics1[promMetricNames[queuedConst]])
+	assertIntsEqual(t, message+" failed should be unchanged", metrics0[promMetricNames[failedConst]], metrics1[promMetricNames[failedConst]])
+	assertIntsEqual(t, message+" running should be unchanged", metrics0[promMetricNames[runningConst]], metrics1[promMetricNames[runningConst]])
+	assertIntsEqual(t, message+" timedout should be unchanged", metrics0[promMetricNames[timedoutConst]], metrics1[promMetricNames[timedoutConst]])
+	assertIntsEqual(t, message+" errors should be unchanged", metrics0[promMetricNames[errorsConst]], metrics1[promMetricNames[errorsConst]])
 }
 
 func doTestWithTimeout(t *testing.T, appname string, routename string, sync bool, hot bool) {
@@ -207,13 +196,13 @@ func doTestWithTimeout(t *testing.T, appname string, routename string, sync bool
 	metrics1 := getAllMetricsForAppAndRoute(t, appname, routename)
 
 	message := "after calling " + appname + "/" + routename + " with sleeptime " + strconv.Itoa(sleeptime)
-	assertIntsEqual(t, message+" calls should have increased by 1", metrics0[callsMet]+1, metrics1[callsMet])
-	assertIntsEqual(t, message+" completed should be unchanged", metrics0[completedMet], metrics1[completedMet])
-	assertIntsEqual(t, message+" queued should be unchanged", metrics0[queuedMet], metrics1[queuedMet])
-	assertIntsEqual(t, message+" failed should have increased by 1", metrics0[failedMet]+1, metrics1[failedMet])
-	assertIntsEqual(t, message+" running should be unchanged", metrics0[runningMet], metrics1[runningMet])
-	assertIntsEqual(t, message+" timedout should have increased by 1", metrics0[timedoutMet]+1, metrics1[timedoutMet])
-	assertIntsEqual(t, message+" errors should be unchanged", metrics0[errorsMet], metrics1[errorsMet])
+	assertIntsEqual(t, message+" calls should have increased by 1", metrics0[promMetricNames[callsConst]]+1, metrics1[promMetricNames[callsConst]])
+	assertIntsEqual(t, message+" completed should be unchanged", metrics0[promMetricNames[completedConst]], metrics1[promMetricNames[completedConst]])
+	assertIntsEqual(t, message+" queued should be unchanged", metrics0[promMetricNames[queuedConst]], metrics1[promMetricNames[queuedConst]])
+	assertIntsEqual(t, message+" failed should have increased by 1", metrics0[promMetricNames[failedConst]]+1, metrics1[promMetricNames[failedConst]])
+	assertIntsEqual(t, message+" running should be unchanged", metrics0[promMetricNames[runningConst]], metrics1[promMetricNames[runningConst]])
+	assertIntsEqual(t, message+" timedout should have increased by 1", metrics0[promMetricNames[timedoutConst]]+1, metrics1[promMetricNames[timedoutConst]])
+	assertIntsEqual(t, message+" errors should be unchanged", metrics0[promMetricNames[errorsConst]], metrics1[promMetricNames[errorsConst]])
 }
 
 func doTestWithPanic(t *testing.T, appname string, routename string, sync bool) {
@@ -250,13 +239,13 @@ func doTestWithPanic(t *testing.T, appname string, routename string, sync bool) 
 	metrics1 := getAllMetricsForAppAndRoute(t, appname, routename)
 
 	message := "after calling " + appname + "/" + routename + " with sleeptime " + strconv.Itoa(sleeptime)
-	assertIntsEqual(t, message+" calls should have increased by 1", metrics0[callsMet]+1, metrics1[callsMet])
-	assertIntsEqual(t, message+" completed should be unchanged", metrics0[completedMet], metrics1[completedMet])
-	assertIntsEqual(t, message+" queued should be unchanged", metrics0[queuedMet], metrics1[queuedMet])
-	assertIntsEqual(t, message+" failed should have increased by 1", metrics0[failedMet]+1, metrics1[failedMet])
-	assertIntsEqual(t, message+" running should be unchanged", metrics0[runningMet], metrics1[runningMet])
-	assertIntsEqual(t, message+" timedout should be unchanged", metrics0[timedoutMet], metrics1[timedoutMet])
-	assertIntsEqual(t, message+" errors should have increased by 1", metrics0[errorsMet]+1, metrics1[errorsMet])
+	assertIntsEqual(t, message+" calls should have increased by 1", metrics0[promMetricNames[callsConst]]+1, metrics1[promMetricNames[callsConst]])
+	assertIntsEqual(t, message+" completed should be unchanged", metrics0[promMetricNames[completedConst]], metrics1[promMetricNames[completedConst]])
+	assertIntsEqual(t, message+" queued should be unchanged", metrics0[promMetricNames[queuedConst]], metrics1[promMetricNames[queuedConst]])
+	assertIntsEqual(t, message+" failed should have increased by 1", metrics0[promMetricNames[failedConst]]+1, metrics1[promMetricNames[failedConst]])
+	assertIntsEqual(t, message+" running should be unchanged", metrics0[promMetricNames[runningConst]], metrics1[promMetricNames[runningConst]])
+	assertIntsEqual(t, message+" timedout should be unchanged", metrics0[promMetricNames[timedoutConst]], metrics1[promMetricNames[timedoutConst]])
+	assertIntsEqual(t, message+" errors should have increased by 1", metrics0[promMetricNames[errorsConst]]+1, metrics1[promMetricNames[errorsConst]])
 }
 
 func call(t *testing.T, appname string, routename string, sync bool, forceTimeout bool, forcePanic bool) string {

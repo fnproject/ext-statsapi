@@ -70,6 +70,8 @@ const (
 	callsConst     = iota
 	errorsConst    = iota
 	timedoutConst  = iota
+	queuedConst    = iota // used only in tests
+	runningConst   = iota // used only in tests
 )
 
 // in this map, the key is the constant for the type of statistic and
@@ -81,7 +83,7 @@ var jsonKeys = map[int]string{
 	durationsConst: "durations",
 	callsConst:     "calls",
 	errorsConst:    "errors",
-	timedoutConst:  "timedout",
+	timedoutConst:  "timeouts",
 }
 
 var appLabel = "fn_appname"

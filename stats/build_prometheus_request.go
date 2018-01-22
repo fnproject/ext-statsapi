@@ -7,7 +7,9 @@ var promMetricNames = map[int]string{
 	failedConst:    "fn_failed",
 	callsConst:     "fn_calls",
 	errorsConst:    "fn_errors",
-	timedoutConst:  "fn_timedout",
+	timedoutConst:  "fn_timeouts",
+	runningConst:   "fn_running", // used for tests only
+	queuedConst:    "fn_queued",  // used for tests only
 	durationsConst: "fn_span_agent_submit_duration_seconds",
 }
 

@@ -11,7 +11,8 @@ import (
 	"time"
 )
 
-var requiredMetrics = []string{callsMet, queuedMet, completedMet, failedMet, runningMet, timedoutMet, errorsMet}
+var requiredMetrics = []string{promMetricNames[callsConst], promMetricNames[queuedConst],
+	promMetricNames[completedConst], promMetricNames[failedConst], promMetricNames[runningConst], promMetricNames[timedoutConst], promMetricNames[errorsConst]}
 
 // This file contains test utilities only (no tests)
 
@@ -70,91 +71,91 @@ func checkNotNil(t *testing.T, assertionText string, actual interface{}) error {
 // Return the sum of fn_completed for all applications and routes
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getCompletedForAll(t *testing.T) int {
-	return getMetricForAll(t, completedMet)
+	return getMetricForAll(t, promMetricNames[completedConst])
 }
 
 // Return the sum of fn_completed for all routes in the specified application
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getCompletedForApp(t *testing.T, appname string) int {
-	return getMetricForApp(t, appname, completedMet)
+	return getMetricForApp(t, appname, promMetricNames[completedConst])
 }
 
 // Return the value of fn_completed for the specified application and route
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getCompletedForAppAndRoute(t *testing.T, appname string, routename string) int {
-	return getMetricForAppAndRoute(t, appname, routename, completedMet)
+	return getMetricForAppAndRoute(t, appname, routename, promMetricNames[completedConst])
 }
 
 // Return the sum of fn_failed for all applications and routes
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getFailedForAll(t *testing.T) int {
-	return getMetricForAll(t, failedMet)
+	return getMetricForAll(t, promMetricNames[failedConst])
 }
 
 // Return the sum of fn_failed for all routes in the specified application
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getFailedForApp(t *testing.T, appname string) int {
-	return getMetricForApp(t, appname, failedMet)
+	return getMetricForApp(t, appname, promMetricNames[failedConst])
 }
 
 // Return the value of fn_failed for the specified application and route
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getFailedForAppAndRoute(t *testing.T, appname string, routename string) int {
-	return getMetricForAppAndRoute(t, appname, routename, failedMet)
+	return getMetricForAppAndRoute(t, appname, routename, promMetricNames[failedConst])
 }
 
 // Return the sum of fn_calls for all applications and routes
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getCallsForAll(t *testing.T) int {
-	return getMetricForAll(t, callsMet)
+	return getMetricForAll(t, promMetricNames[callsConst])
 }
 
 // Return the sum of fn_calls for all routes in the specified application
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getCallsForApp(t *testing.T, appname string) int {
-	return getMetricForApp(t, appname, callsMet)
+	return getMetricForApp(t, appname, promMetricNames[callsConst])
 }
 
 // Return the value of fn_calls for the specified application and route
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getCallsForAppAndRoute(t *testing.T, appname string, routename string) int {
-	return getMetricForAppAndRoute(t, appname, routename, callsMet)
+	return getMetricForAppAndRoute(t, appname, routename, promMetricNames[callsConst])
 }
 
 // Return the sum of fn_errors for all applications and routes
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getErrorsForAll(t *testing.T) int {
-	return getMetricForAll(t, errorsMet)
+	return getMetricForAll(t, promMetricNames[errorsConst])
 }
 
 // Return the sum of fn_errors for all routes in the specified application
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getErrorsForApp(t *testing.T, appname string) int {
-	return getMetricForApp(t, appname, errorsMet)
+	return getMetricForApp(t, appname, promMetricNames[errorsConst])
 }
 
 // Return the value of fn_errors for the specified application and route
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getErrorsForAppAndRoute(t *testing.T, appname string, routename string) int {
-	return getMetricForAppAndRoute(t, appname, routename, errorsMet)
+	return getMetricForAppAndRoute(t, appname, routename, promMetricNames[errorsConst])
 }
 
 // Return the sum of fn_timedout for all applications and routes
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getTimedOutForAll(t *testing.T) int {
-	return getMetricForAll(t, timedoutMet)
+	return getMetricForAll(t, promMetricNames[timedoutConst])
 }
 
 // Return the sum of fn_timedout for all routes in the specified application
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getImedOutForApp(t *testing.T, appname string) int {
-	return getMetricForApp(t, appname, timedoutMet)
+	return getMetricForApp(t, appname, promMetricNames[timedoutConst])
 }
 
 // Return the value of fn_timedout for the specified application and route
 // Metric values are obtained by scraping the /metrics endpoint directly
 func getTimedOutForAppAndRoute(t *testing.T, appname string, routename string) int {
-	return getMetricForAppAndRoute(t, appname, routename, timedoutMet)
+	return getMetricForAppAndRoute(t, appname, routename, promMetricNames[timedoutConst])
 }
 
 // Return the sum of the specified Prometheus gauge or counter metric for all applications and routes

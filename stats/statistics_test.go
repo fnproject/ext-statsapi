@@ -210,23 +210,23 @@ func verifyOnce(t *testing.T, response interface{}, expectedMetrics map[string]i
 	}
 
 	// check the fields in the data array that correspond to basic metrics
-	err = checkMetricField(t, dataAsMap, "calls", expectedMetrics["fn_calls"])
+	err = checkMetricField(t, dataAsMap, jsonKeys[callsConst], expectedMetrics[promMetricNames[callsConst]])
 	if err != nil {
 		return err
 	}
-	err = checkMetricField(t, dataAsMap, "completed", expectedMetrics["fn_completed"])
+	err = checkMetricField(t, dataAsMap, jsonKeys[completedConst], expectedMetrics[promMetricNames[completedConst]])
 	if err != nil {
 		return err
 	}
-	err = checkMetricField(t, dataAsMap, "failed", expectedMetrics["fn_failed"])
+	err = checkMetricField(t, dataAsMap, jsonKeys[failedConst], expectedMetrics[promMetricNames[failedConst]])
 	if err != nil {
 		return err
 	}
-	err = checkMetricField(t, dataAsMap, "timedout", expectedMetrics["fn_timedout"])
+	err = checkMetricField(t, dataAsMap, jsonKeys[timedoutConst], expectedMetrics[promMetricNames[timedoutConst]])
 	if err != nil {
 		return err
 	}
-	err = checkMetricField(t, dataAsMap, "errors", expectedMetrics["fn_errors"])
+	err = checkMetricField(t, dataAsMap, jsonKeys[errorsConst], expectedMetrics[promMetricNames[errorsConst]])
 	if err != nil {
 		return err
 	}
