@@ -159,7 +159,7 @@ You can now deploy and run functions and try out the statistics API extension.
 
 ## Trying out the statistics API with a cluster of custom Fn servers
 
-Create some simple cold async functions. The following will create three cold functions, which you can then run on either server:
+The following will create three cold functions, which you can then run on either server:
 
 ```
 cd $GOPATH/src/github.com/fnproject/ext-statsapi/test/hello-cold-async-a
@@ -171,13 +171,11 @@ cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators-clustered
 bash run-cold-async-clustered.bash
 ```
 You can now use the statistics API to obtain aggregated metrics across both Fn servers. If you ran the above script once you should see the number of calls grow to 90.  
-```
-curl localhost:8080/v1/apps/hello-cold-async-a/stats
-```
-Alternatively open a browser at (localhost:8080/v1/apps/hello-cold-async-a/stats)
+
+The easiest way to explore the statistics API is to run it in a browser, as this usually displays the returned JSON in a readable format:
+
+(http://localhost:8080/v1/apps/hello-cold-async-a/stats)
 
 Note that you can use this API on either of the two custom Fn servers and get the same result. Try the following and compare:
-```
-curl localhost:8081/v1/apps/hello-cold-async-a/stats
-```
-Alternatively open a browser at (localhost:8081/v1/apps/hello-cold-async-a/stats)
+
+(http://localhost:8080/v1/apps/hello-cold-async-a/stats)
