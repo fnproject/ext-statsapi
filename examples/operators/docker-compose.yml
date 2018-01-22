@@ -1,7 +1,7 @@
 version: '3'
 services:
   fnserver:
-    image: imageuser/imagename
+    image: imageuser/fn-ext-statsapi
     ports:
       - "8080:8080"
     volumes:
