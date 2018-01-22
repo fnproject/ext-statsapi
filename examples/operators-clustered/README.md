@@ -8,7 +8,7 @@ This example uses Docker Compose.
 
 ## Build your custom image
 
-If you have not already done so you need to build a custom Fn server docker image containing the statistics API extension. 
+If you have not already done so, you need to build a custom Fn server docker image containing the statistics API extension. 
 This is described in  [How to build a custom Fn server docker image](../operators/README.md).
 For convenience the same instructions are repeated below:
 
@@ -116,9 +116,9 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
 ```
 
-This will start two Fn servers using the custom Fn image you created above. 
-One listens on port 8080 and the other listens on port 8081.
-For both Fn server, the environment variable `FN_EXT_STATS_PROM_HOST` is used to specify that the Fn server should fetch
+This will start two Fn servers using the custom Fn image you created above. One listens on port 8080 and the other listens on port 8081.
+
+For each Fn server, the environment variable `FN_EXT_STATS_PROM_HOST` is used to specify that the Fn server should fetch
 statistics from a Prometheus server running on the `prometheus:9090`, where   `prometheus` is defined to refer to the Prometheus server.
 
 It will also start Prometheus using the config file [prometheus.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators-clustered/prometheus.yml):
@@ -164,13 +164,14 @@ Create some simple cold async functions
 cd $GOPATH/src/github.com/fnproject/ext-statsapi/test/hello-cold-async-a
 fn deploy --all --local
 ```
-Now run these async functions, some on one Fn server and some on the other. You may want to run this several times to generate plenty of data.
-Note that each run performs 90 function calls.
+This creates three cold functions, which you can run on either Fn server. To run them on the server that listens on port 8080:
+
+The following script will run performs 90 function calls, 60 on the first server and 30 on the other. You may wish to run this several times: this will generate some data for you to query using the statistics API. 
 ```
 cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators-clustered
 bash run-cold-async-clustered.bash
 ```
-You can now use the statistics API to obtain aggregated metrics across both Fn servers. If you ran the above script once you should see jhe number of calls grow to 90.  
+You can now use the statistics API to obtain aggregated metrics across both Fn servers. If you ran the above script once you should see the number of calls grow to 90.  
 ```
 curl localhost:8080/v1/apps/hello-cold-async-a/stats
 ```
