@@ -158,11 +158,25 @@ fn deploy --all --local
 The following script will run performs 90 function calls. You may wish to run this several times: this will generate some data for you to query using the statistics API. 
 ```
 cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
-bash run-cold-async-clustered.bash
+bash run-cold-async.bash
 ```
-You can now use the statistics API to obtain metrics from the Fn server. If you ran the above script once you should see the number of calls grow to 90.  
+You can now use the statistics API to obtain metrics from the Fn server. The easiest way to explore the statistics API is to run it in a browser, as this usually displays the returned JSON in a readable format.
 
-The easiest way to explore the statistics API is to run it in a browser, as this usually displays the returned JSON in a readable format:
+The following API call returns statistics for all functions in the application `hello-cold-async-a`
 
 http://localhost:8080/v1/apps/hello-cold-async-a/stats
+
+If you ran the above script once you should see the number of calls grow to 90. 
+
+Now try the following API calls. These return statistics for each of the three functions individually:
+
+http://localhost:8080/v1/apps/hello-cold-async-a/routes/hello-cold-async-a1/stats
+http://localhost:8080/v1/apps/hello-cold-async-a/routes/hello-cold-async-a2/stats
+http://localhost:8080/v1/apps/hello-cold-async-a/routes/hello-cold-async-a3/stats
+
+Finally try the following API call, which returns statistics for all applications:
+
+http://localhost:8080/v1/stats
+
+In this case we have used only one application so the result will be the same as the first example.
 
