@@ -27,7 +27,7 @@ services:
     ports:
       - "6379:6379"
   fnserver0:
-    image: imageuser/imagename
+    image: imageuser/fn-ext-statsapi
     restart: always
     depends_on:
       - mq
@@ -43,7 +43,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
   fnserver1:
-    image: imageuser/imagename
+    image: imageuser/fn-ext-statsapi
     restart: always
     depends_on:
       - mq

@@ -8,17 +8,14 @@ This example uses Docker Compose.
 
 ## Build your custom image
 
-First of all you need to build a custom Fn server docker image containing the statistics API extension. 
+If you have not already done so you need to build a custom Fn server docker image containing the statistics API extension. 
 This is described in  [How to build a custom Fn server docker image](../operators/README.md).
 For convenience the same instructions are repeated below.
 
-To build your custom image using the same configuration file  `ext.yaml` as in that other example:
 ```sh
 cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
 fn build-server -t imageuser/imagename
 ```
-You can then use standard docker tools to deploy it in a docker image repository if required.
-
 ## Run a cluster of two custom Fn images and Prometheus using Docker Compose
 
 The quickest way to start a cluster of custom Fn servers and Prometheus is to use Docker Compose. 

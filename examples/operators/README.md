@@ -31,10 +31,9 @@ cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
 
 To build your custom image:
 ```sh
-fn build-server -t imageuser/imagename
+fn build-server -t imageuser/fn-ext-statsapi
 ```
-
-You can then use standard docker tools to deploy it in a docker image repository if required.
+If you intend to deploy the image to a docker image repository you will need to change `imageuser` to something suitable such as your repository username. If you are not planning to do this you can leave it unchanged.
 
 ## Run your custom Fn image and Prometheus using Docker Compose
 
@@ -44,13 +43,13 @@ This takes care of configuring the two processes to connect to each other.
 Install Docker Compose using [these instructions](https://docs.docker.com/compose/install/). 
 
 We will use the [docker-compose.yml](https://github.com/fnproject/ext-statsapi/blob/master/examples/operators/docker-compose.yml) in this directory.
-You should change `imageuser/imagename` to whatever you specified when building your custom Fn image.
+You should change `imageuser` to whatever you specified when building your custom Fn image.
 
 ```yaml
 version: '3'
 services:
   fnserver:
-    image: imageuser/imagename
+    image: imageuser/fn-ext-statsapi
     ports:
       - "8080:8080"
     volumes:
