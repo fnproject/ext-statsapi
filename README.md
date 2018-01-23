@@ -175,7 +175,7 @@ The `data` element contains elements `calls`, `completed`, `errors`, `timeouts` 
 This is a count of failed (but not timed out) function calls since the server was started.
 If there were no errors the array may be empty.  
 
-* The `timedout` element is an array of objects. Each object contains a single observation of the `fn_timedout` counter metric at a specific time.
+* The `timeouts` element is an array of objects. Each object contains a single observation of the `fn_timeouts` counter metric at a specific time.
 This is a count of timed out function calls since the server was started.
 If no function calls timed out function the array may be empty.  
 
