@@ -165,7 +165,7 @@ Here is a sample response:
 The `success` element will be set to `success` if the API call is successful. 
 If the API call is unsuccessful then the `success` element will be set to `error` and an additional element `error` will contains a description of the failure.
 
-The `data` element contains elements `completed`, `errors`, `timedout` and `durations`. 
+The `data` element contains elements `calls`, `completed`, `errors`, `timeouts` and `durations`. 
 
 * The `calls` element is an array of objects. Each object contains a single observation of the `fn_calls` counter metric at a specific time. This is a count of the number of function calls made since the server was started.
 
