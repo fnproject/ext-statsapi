@@ -97,7 +97,7 @@ jobs:
           command: |
             [[ $CIRCLE_BRANCH != "master" ]] && { echo >&2 "Skipping this step as this is not the master branch"; exit 0; }
             cd $GOPATH/src/github.com/fnproject/ext-statsapi/examples/operators
-            fn build-server -t imageuser/imagename
+            fn build-server -t imageuser/fn-ext-statsapi
       - run:
           name: Start custom Fn server docker image and Prometheus
           command: |
